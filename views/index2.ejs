@@ -1,6 +1,4 @@
 <% layout('/layouts/boilerplate') -%>
-
-
  
   <script type="text/javascript">
     function googleTranslateElementInit() {
@@ -13,10 +11,19 @@
   </script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+  <style>
+    .truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%; /* Adjust as needed */
+}
+
+  </style>
 
 
 
-  
 <div class="container101">
   <nav class="sidebar">
     <div class="menu_content">
@@ -129,21 +136,45 @@
     </div>
   </nav>
   <nav class="main-content" id="Home">
-    <section class="container1">
-      <div class="slider-wrapper">
-        <div class="slider">
-          <img id="slide-1" src="/offer1.jpg" alt="Offer1">
-          <img id="slide-2" src="/offer2.jpg" alt="Offer2">
-          <img id="slide-3" src="/offer3.jpg" alt="Offer3">
-          <div class="slider-nav">
-            <a href="#slide-1"></a>
-            <a href="#slide-2"></a>
-            <a href="#slide-3"></a>
-          </div>
+    <div class="slider-wrapper">
+      <div class="slider" id="imageSlider">
+        <img id="slide-1" src="/offer1.jpg" alt="Offer1">
+        <img id="slide-2" src="/offer2.jpg" alt="Offer2">
+        <img id="slide-3" src="/offer3.jpg" alt="Offer3">
+        <div class="slider-nav">
+          <a href="#slide-1"></a>
+          <a href="#slide-2"></a>
+          <a href="#slide-3"></a>
         </div>
       </div>
-    </section>
+    </div>
+    
+    <script>
+      // JavaScript for auto-rotating images
+      document.addEventListener('DOMContentLoaded', function () {
+        const slides = document.querySelectorAll('.slider img');
+        let currentIndex = 0;
 
+        function showNextSlide() {
+          // Hide all slides
+          slides.forEach((slide) => {
+            slide.style.display = 'none';
+          });
+
+          // Show the next slide
+          currentIndex = (currentIndex + 1) % slides.length;
+          slides[currentIndex].style.display = 'block';
+        }
+
+        // Initialize the slider
+        slides.forEach((slide, index) => {
+          slide.style.display = index === 0 ? 'block' : 'none';
+        });
+
+        // Set interval for auto-rotation (e.g., every 3 seconds)
+        setInterval(showNextSlide, 3000);
+      });
+    </script>
     <%if (!contractorId && !sellerId) { %>
       <div class="apply">
         <div class="Acontract app">
@@ -181,8 +212,32 @@
           </div>
           <p class="card-title">&#x20b9; <%= product.price %></p>
           <p class="card-title"><%= product.title %></p>
-          <p class="card-info"><%= product.Smalldescription %></p>
+          <p class="card-info truncate">
+            <%= product.Smalldescription %>
+          </p>
+
           <p class="card-info"><b>Company:</b> <%= product.owner.companyName %></p> 
+            <p>
+              <% let rating=parseFloat(product.avgRating); if (!isNaN(rating)) { let fullStars=Math.floor(rating); let
+                halfStar=rating % 1>= 0.5 ? 1 : 0;
+                let emptyStars = 5 - (fullStars + halfStar);
+                %>
+                <% for(let i=0; i < fullStars; i++) { %>
+                  <i class="fa fa-star" style="color: gold;"></i>
+                  <% } %>
+          
+                    <% if(halfStar) { %>
+                      <i class="fa fa-star-half-alt" style="color: gold;"></i>
+                      <% } %>
+          
+                        <% for(let i=0; i < emptyStars; i++) { %>
+                          <i class="fa fa-star" style="color: lightgray;"></i>
+                          <% } %>
+                            <% } else { %>
+                              <%= product.avgRating %>
+                                <% } %>
+            </p>
+
         </div>
       </a>
     <% }); %>

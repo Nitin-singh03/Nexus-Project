@@ -1,0 +1,85 @@
+<% layout('./layouts/boilerplate') -%>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login - AgroGuide</title>
+        <style>
+            .button-container {
+                display: flex;
+                justify-content: center;
+                gap: 100px;
+                /* Space between buttons */
+                margin-top: 50px;
+                flex-wrap: wrap;
+                /* Wraps if the screen is too small */
+            }
+
+            .button {
+                width: 200px;
+                height: 200px;
+                background-color: #3c9343;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                font-weight: bold;
+                border-radius: 50%;
+                /* Circular shape */
+                cursor: pointer;
+                user-select: none;
+                transition: background-color 0.3s;
+            }
+
+            .button:hover {
+                background-color: #126a1f;
+            }
+
+            .row {
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="row mt-3">
+            <h1 class="col-6 offset-3">Login to AgroGuide</h1>
+
+            <div class="button-container">
+                <div class="button" onclick="goToPage('contractor/login')">Contractor</div>
+                <div class="button" onclick="goToPage('seller/login')">Seller</div>
+                <div class="button" onclick="goToPage('admin/login')">Admin</div>
+                <div class="button" onclick="goToPage('login')">User</div>
+            </div>
+
+            
+        </div>
+
+        <script>
+            function goToPage(url) {
+                window.location.href = url;
+            }
+
+            (function () {
+                'use strict';
+                var forms = document.querySelectorAll('.needs-validation');
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+            })();
+        </script>
+
+    </body>
+
+    </html>

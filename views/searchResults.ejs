@@ -215,8 +215,28 @@
                   </span>
                   <p>Price: &#x20b9 <%= product.price %></p>
                   <div>
-                    <p>Rating</p>
+                    <p>
+                      <% let rating=parseFloat(product.avgRating); if (!isNaN(rating)) { let fullStars=Math.floor(rating); let
+                        halfStar=rating % 1>= 0.5 ? 1 : 0;
+                        let emptyStars = 5 - (fullStars + halfStar);
+                        %>
+                        <% for(let i=0; i < fullStars; i++) { %>
+                          <i class="fa fa-star" style="color: gold;"></i>
+                          <% } %>
+                  
+                            <% if(halfStar) { %>
+                              <i class="fa fa-star-half-alt" style="color: gold;"></i>
+                              <% } %>
+                  
+                                <% for(let i=0; i < emptyStars; i++) { %>
+                                  <i class="fa fa-star" style="color: lightgray;"></i>
+                                  <% } %>
+                                    <% } else { %>
+                                      <%= product.avgRating %>
+                                        <% } %>
+                    </p>
                   </div>
+
                 </div>
               </a>
             <% }); %>

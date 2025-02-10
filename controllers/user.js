@@ -3,7 +3,7 @@ const passport = require("passport");
 const Product = require('../model/product');
 const Contract = require("../model/contract");
 const Contractor =require('../model/contractor');
-
+const ReviewProduct = require('../model/productReview.js');
 const ContractorReview = require('../model/contractorReview.js');
 
 exports.signup = async (req, res) => {
@@ -70,8 +70,24 @@ exports.renderMain = async (req, res) => {
     try {
         const products = await Product.find().populate('owner').sort('category');
 
+        // Fetch and calculate average rating for each product
+        const productRatings = await ReviewProduct.aggregate([
+            { $group: { _id: "$product", avgRating: { $avg: "$rating" } } }
+        ]);
+
+        // Create a map of productId -> avgRating
+        const ratingMap = {};
+        productRatings.forEach(r => ratingMap[r._id.toString()] = r.avgRating.toFixed(1)); 
+
+        // Attach average rating to products
+        const productsWithRatings = products.map(product => ({
+            ...product.toObject(),
+            avgRating: ratingMap[product._id.toString()] || "No ratings yet"
+        }));
+
         const categories = [...new Set(products.map(product => product.category))];
-        res.render('index2', { products, categories});
+
+        res.render('index2', { products: productsWithRatings, categories });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -114,13 +130,30 @@ exports.searchProducts = async (req, res) => {
         };
     }
 
-
     try {
-        let products = await Product.find(filter).populate('owner');
+        let products = await Product.find(filter)
+            .populate('owner') // Populate the owner of the product
+            .lean(); // Convert documents to plain objects for easier manipulation
+
+        // Fetch and attach reviews & average rating for each product
+        for (let product of products) {
+            const reviews = await ReviewProduct.find({ product: product._id }).populate('user');
+            product.reviews = reviews; // Attach reviews to product
+            
+            // Calculate average rating
+            if (reviews.length > 0) {
+                const avgRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+                product.avgRating = avgRating.toFixed(1); // Round to 1 decimal place
+            } else {
+                product.avgRating = "No Ratings Yet";
+            }
+        }
+
+        // Sort products if sorting is applied
         if (sort === 'low-high') {
-            products = products.sort((a, b) => a.price - b.price);
+            products.sort((a, b) => a.price - b.price);
         } else if (sort === 'high-low') {
-            products = products.sort((a, b) => b.price - a.price);
+            products.sort((a, b) => b.price - a.price);
         }
 
         res.render('searchResults', { products, query, sort });

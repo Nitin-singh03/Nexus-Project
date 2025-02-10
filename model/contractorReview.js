@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const contractorReview = new Schema({
-    Contractor: {
+    contractor: {
         type: Schema.Types.ObjectId,
         ref: 'Contractor',
         required: true,

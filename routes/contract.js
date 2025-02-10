@@ -14,4 +14,6 @@ router.post('/delete/:id', contractController.deleteContract);
 
 router.get('/:id', contractController.viewContract);
 
+router.post('/:id/review', contractController.addReviewContractor);
+
 module.exports = router;

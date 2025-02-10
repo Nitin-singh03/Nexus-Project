@@ -1,4 +1,6 @@
 const Contract = require('../model/contract');
+const ContractorReview = require('../model/contractorReview.js');
+const Contractor =require('../model/contractor');
 
 exports.renderNewForm = async(req, res) =>{
     res.render('contractorPage/newPage.ejs');
@@ -96,6 +98,7 @@ exports.deleteContract = async (req, res) => {
 
 exports.viewContract = async (req, res) => {
     try {
+        // Step 1: Fetch contract using contract ID from params
         const contract = await Contract.findById(req.params.id).populate('owner').exec();
         
         if (!contract) {
@@ -103,10 +106,74 @@ exports.viewContract = async (req, res) => {
             return res.redirect('/');
         }
 
-        res.render('contract', { contract });
+        // Step 2: Get the contractor ID from contract's owner field
+        const contractorId = contract.owner?._id;
+
+        if (!contractorId) {
+            req.flash('error', 'Contractor not found for this contract');
+            return res.redirect('/');
+        }
+
+        // Step 3: Fetch the contractor details
+        const contractor = await Contractor.findById(contractorId).exec();
+
+        // Step 4: Fetch all reviews for this contractor
+        const reviews = await ContractorReview.find({ contractor: contractorId }) // ✅ Fixed field name
+            .populate('user', 'username')
+            .exec();
+
+        console.log("Reviews found:", reviews); // Debugging log
+
+        res.render('contract', { contract, contractor, reviews });
     } catch (error) {
         console.error(error);
-        req.flash('error', 'Server Error');
+        req.flash("error", "Something went wrong.");
         res.redirect('/');
+    }
+};
+
+
+
+exports.addReviewContractor = async (req, res) => {
+    try {
+        if (!req.user) {
+            req.flash('error', 'Unauthorized. Please log in to submit a review.');
+            return res.redirect('/login');
+        }
+
+        const { rating, comment } = req.body;
+        const contractId = req.params.id; // Getting contract ID from params
+
+        console.log("Contract ID received:", contractId);
+
+        // Fetch the contract to get the contractor ID
+        const contract = await Contract.findById(contractId);
+        if (!contract) {
+            req.flash('error', 'Contract not found.');
+            return res.redirect('back');
+        }
+
+        const contractorId = contract.owner; // Extract contractor ID from contract
+        console.log("Contractor ID extracted:", contractorId);
+
+        if (!rating || rating < 0 || rating > 5) {
+            req.flash('error', 'Rating must be between 0 and 5.');
+            return res.redirect('back');
+        }
+
+        const newReview = new ContractorReview({
+            contractor: contractorId,
+            user: req.user._id,
+            rating,
+            comment,
+        });
+
+        await newReview.save();
+        req.flash('success', 'Review added!');
+        res.redirect(`/contract/${contractId}`);
+    } catch (error) {
+        console.error("Error while adding review:", error);
+        req.flash('error', 'Server error. Please try again later.');
+        res.redirect('back');
     }
 };

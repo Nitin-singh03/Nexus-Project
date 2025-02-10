@@ -41,13 +41,6 @@
 
     <div class="row mt-3">
         <h1 class="col-6 offset-3">Login to AgroGuide</h1>
-        
-        <div class="button-container">
-            <div class="button" onclick="goToPage('contractor/login')">Contractor</div>
-            <div class="button" onclick="goToPage('seller/login')">Seller</div>
-            <div class="button" onclick="goToPage('admin/login')">Admin</div>
-            <div class="button" onclick="goToPage('user/login')">User</div>
-        </div>
 
         <div class="col-6 offset-3">
             <form id="loginForm" action="/login" method="POST" class="needs-validation" novalidate>
@@ -65,26 +58,6 @@
         </div>
     </div>
 
-    <script>
-        function goToPage(url) {
-            window.location.href = url;
-        }
-
-        (function() {
-            'use strict';
-            var forms = document.querySelectorAll('.needs-validation');
-            Array.prototype.slice.call(forms)
-                .forEach(function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-        })();
-    </script>
 
 </body>
 </html>

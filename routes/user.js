@@ -12,6 +12,10 @@ router.post('/login', authController.login);
 
 router.get('/logout', authController.logout);
 
+router.get('/login-main', (req, res) =>{
+    res.render("login-signup/loginMain.ejs");
+} );
+
 router.get("/login", (req, res) => {
     res.render("login-signup/login.ejs");
 });
