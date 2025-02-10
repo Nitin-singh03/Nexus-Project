@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= product.type %> - Product Details
+    </title>
+    <link rel="stylesheet" href="/Pstyle.css">
+    <link rel="icon"
+        href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+
+<body>
+    <div class="product-container">
+        <div class="product-image">
+            <img src="<%= product.image %>" alt="Product Image">
+        </div>
+        <div class="product-details">
+            <h1>
+                <%= product.type %>
+            </h1>
+            <p><strong>Price:</strong>
+                <%= product.price %>
+            </p>
+            <p><strong>Category:</strong>
+                <%= product.category %>
+            </p>
+            <p><strong>Small Description:</strong>
+                <%= product.Smalldescription %>
+            </p>
+            <p><strong>Large Description:</strong>
+                <%= product.Largedescription %>
+            </p>
+
+            <h2>Seller Information</h2>
+            <p><strong>Company Name:</strong>
+                <%= product.owner.companyName %>
+            </p>
+            <p><strong>Seller Name:</strong>
+                <%= product.owner.username %>
+            </p>
+            <p><strong>Mobile:</strong>
+                <%= product.owner.Pnumber %>
+            </p>
+            <p><strong>Email:</strong>
+                <%= product.owner.email %>
+            </p>
+            <p><strong>District:</strong>
+                <%= product.owner.district %>
+            </p>
+
+            <% if (sellerId && product.owner._id.toString()===sellerId.toString()) { %>
+                <div class="buttons">
+                    <a href="/product/edit/<%= product._id %>" class="button edit">Edit</a>
+                    <form action="/product/delete/<%= product._id %>" method="POST" style="display:inline;">
+                        <button type="submit" class="button delete">Delete</button>
+                    </form>
+                </div>
+                <% } else { %>
+                    <div class="button-container">
+                        <a href="mailto:<%= product.owner.email %>" class="button mail">Mail</a>
+                        <a class="button mail">Message Seller</a>
+                    </div>
+
+                    <!-- Review Button -->
+                    <div class="button-container">
+                        <button class="button mail review-btn">Add Review</button>
+                    </div>
+
+                    <% } %>
+
+                        
+
+        </div>
+    </div>
+
+    <div class="review-container">
+        <div id="review-form-container" class="review-form">
+            <h3>Write a Review</h3>
+            <form id="review-form" action="/product/<%= product._id %>/review" method="POST">
+                <label for="rating">Rating:</label>
+                <div class="star-rating">
+                    <input type="radio" name="rating" value="5" id="star5">
+                    <label for="star5">&#9733;</label>
+                    <input type="radio" name="rating" value="4" id="star4">
+                    <label for="star4">&#9733;</label>
+                    <input type="radio" name="rating" value="3" id="star3">
+                    <label for="star3">&#9733;</label>
+                    <input type="radio" name="rating" value="2" id="star2">
+                    <label for="star2">&#9733;</label>
+                    <input type="radio" name="rating" value="1" id="star1" required>
+                    <label for="star1">&#9733;</label>
+                </div>
+    
+                <label for="comment">Comment:</label>
+                <textarea name="comment" required></textarea>
+    
+                <button type="submit" class="button submit-review">Submit</button>
+            </form>
+        </div>
+        <div class="reviews-section">
+            <h3>Customer Reviews</h3>
+        
+            <% if (reviews.length> 0) { %>
+                <% reviews.forEach(review=> { %>
+                    <div class="review-card">
+                        <p><strong>
+                                <%= review.userId.username %>
+                            </strong> - <%= review.createdAt.toDateString() %>
+                        </p>
+                        <p>⭐ <%= review.rating %>/5</p>
+                        <p>
+                            <%= review.comment %>
+                        </p>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <p>No reviews yet. Be the first to review this product!</p>
+                            <% } %>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const reviewBtn = document.querySelector(".review-btn");
+            const reviewForm = document.getElementById("review-form-container");
+            const stars = document.querySelectorAll(".star-rating label");
+            const starInputs = document.querySelectorAll(".star-rating input");
+
+            if (reviewBtn) {
+                reviewBtn.addEventListener("click", function () {
+                    reviewForm.style.display = "block";
+                });
+            }
+
+            // Hover & Click Effect for Stars
+            stars.forEach(star => {
+                star.addEventListener("mouseover", function () {
+                    highlightStars(this.previousElementSibling ? this.previousElementSibling.value : 0);
+                });
+
+                star.addEventListener("mouseout", resetStars);
+
+                star.addEventListener("click", function () {
+                    this.previousElementSibling.checked = true;
+                    highlightStars(this.previousElementSibling.value);
+                });
+            });
+
+            function highlightStars(value) {
+                stars.forEach(label => {
+                    label.style.color = label.previousElementSibling.value <= value ? "gold" : "#ccc";
+                });
+            }
+
+            function resetStars() {
+                let checkedStar = [...starInputs].find(input => input.checked);
+                highlightStars(checkedStar ? checkedStar.value : 0);
+            }
+        });
+    </script>
+    
+    </body>
+    
+    </html>

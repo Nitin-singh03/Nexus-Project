@@ -1,0 +1,247 @@
+<% layout('/layouts/boilerplate') -%>
+  
+<div class="container101">
+  <nav class="sidebar">
+    <div class="menu_content">
+      <ul class="menu_items">
+        <div class="menu_title menu_dahsboard"></div>
+        <li class="item">
+          <a href="/searchContractor" class="nav_link submenu_item">
+            <span class="navlink_icon">
+              <i class="fa-solid fa-file-contract"></i>
+            </span>
+            <span class="navlink">Contact Contractors</span>
+          </a>
+        </li>
+
+        <li class="item">
+          <div class="nav_link submenu_item">
+            <span class="navlink_icon">
+              <i class="bx bx-grid-alt"></i>
+            </span>
+            <span class="navlink">Overview</span>
+            <i class="bx bx-chevron-right arrow-left"></i>
+          </div>
+          <ul class="menu_items submenu">
+            <% let uniqueCategories = [...new Set(products.map(p => p.category))]; %>
+            <% uniqueCategories.forEach(category => { %>
+              <li><a href="#<%= category.replace(/\s+/g, '-') %>" class="nav_link sublink"><%= category %></a></li>
+            <% }); %>
+          </ul>
+        </li>
+
+        <li class="item">
+          <a href="/predict" class="nav_link">
+            <span class="navlink_icon">
+              <i class="fa-solid fa-chart-line"></i>
+            </span>
+            <span class="navlink">Analyse Price</span>
+          </a>
+        </li>
+
+        <li class="item">
+          <a href="/commodity_price" class="nav_link">
+            <span class="navlink_icon">
+              <i class="fa-solid fa-tag"></i>
+            </span>
+            <span class="navlink">Commodity Price</span>
+          </a>
+        </li>
+
+        <li class="item">
+          <a href="/weather" class="nav_link">
+            <span class="navlink_icon">
+              <i class="fa-solid fa-cloud"></i>
+            </span>
+            <span class="navlink">Weather Forcast</span>
+          </a>
+        </li>
+      </ul>
+      <%if (!contractorId && !sellerId) { %>
+        <ul class="menu_items">
+          <div class="menu_title menu_editor"></div>
+
+          <li class="item">
+            <a href="/seller/status" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-flag"></i>
+              </span>
+              <span class="navlink">Check for Seller</span>
+            </a>
+          </li>
+          <li class="item">
+            <a href="/contractor/status" class="nav_link">
+              <span class="navlink_icon">
+                <i class="fa-solid fa-file-contract"></i>
+              </span>
+              <span class="navlink">Check for Contractor</span>
+            </a>
+          </li>
+        </ul>
+        <ul class="menu_items">
+          <div class="menu_title menu_setting"></div>
+          <li class="item">
+            <a href="/seller/apply" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-flag"></i>
+              </span>
+              <span class="navlink">Become Seller</span>
+            </a>
+          </li>
+          <li class="item">
+            <a href="/contractor/apply" class="nav_link">
+              <span class="navlink_icon">
+                <i class="fa-solid fa-file-contract"></i>
+              </span>
+              <span class="navlink">Become Contractor</span>
+            </a>
+          </li>
+        </ul>
+      <% } %>
+
+      <div class="bottom_content">
+        <div class="bottom expand_sidebar">
+          <span> Expand</span>
+          <i class='bx bx-log-in' ></i>
+        </div>
+        <div class="bottom collapse_sidebar">
+          <span> Collapse</span>
+          <i class='bx bx-log-out'></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <nav class="main-content" id="Home">
+    <section class="container1">
+      <div class="slider-wrapper">
+        <div class="slider">
+          <img id="slide-1" src="/offer1.jpg" alt="Offer1">
+          <img id="slide-2" src="/offer2.jpg" alt="Offer2">
+          <img id="slide-3" src="/offer3.jpg" alt="Offer3">
+          <div class="slider-nav">
+            <a href="#slide-1"></a>
+            <a href="#slide-2"></a>
+            <a href="#slide-3"></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%if (!contractorId && !sellerId) { %>
+      <div class="apply">
+        <div class="Acontract app">
+          <a href="/contractor/apply" aria-label="Apply to become a contractor">
+            <div class="app1">
+              
+              <p><i class="fa-solid fa-user-tie"></i> Become Contractor</p>
+            </div>
+          </a>
+        </div>
+        <div class="Aseller app">
+          <a href="/seller/apply" aria-label="Apply to become a seller">
+            <div class="app1">
+              
+              <p><i class="fa-solid fa-shop"></i> Become Seller</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    <% } %>
+    <% let currentCategory = ''; %>
+    <% products.forEach((product, index) => { %>
+      <% if (product.category !== currentCategory) { %>
+        <% if (index !== 0) { %> </div> <% } %>
+        
+        <h1 class="topic" id="<%= product.category.replace(/\s+/g, '-') %>"><%= product.category %></h1>
+        <div class="main-div">
+        <% currentCategory = product.category; %>
+      <% } %>
+
+      <a href="/product/<%= product._id %>" class="product-link">
+        <div class="in-content">
+          <div class="img-div">
+            <img src="<%= product.image %>" class="card-img" alt="<%= product.title %>">
+          </div>
+          <p class="card-title">&#x20b9; <%= product.price %></p>
+          <p class="card-title"><%= product.title %></p>
+          <p class="card-info"><%= product.Smalldescription %></p>
+          <p class="card-info"><b>Company:</b> <%= product.owner.companyName %></p> 
+        </div>
+      </a>
+    <% }); %>
+    </div> 
+
+    <footer class="footer">
+      <div class="f-info">
+        <div class="f-info-socials">
+          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-linkedin"></i>
+        </div>
+        <div class="f-info-brand">&copy; AgroGuide Private Limited</div>
+        <div class="f-info-links">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </footer>
+  </nav>
+</div>
+
+<script>
+  const sidebar = document.querySelector(".sidebar");
+  const submenuItems = document.querySelectorAll(".submenu_item");
+  const sidebarOpen = document.querySelector("#sidebarOpen");
+  const sidebarClose = document.querySelector(".collapse_sidebar");
+  const sidebarExpand = document.querySelector(".expand_sidebar");
+  
+  
+  document.querySelectorAll('.nav_link.sublink').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+        behavior: 'smooth'
+      });
+    });
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.Home').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  });
+  
+  
+  
+  sidebarOpen.addEventListener("click", () => sidebar.classList.toggle("close"));
+  
+  sidebarClose.addEventListener("click", () => {
+    sidebar.classList.add("close", "hoverable");
+  });
+  
+  sidebarExpand.addEventListener("click", () => {
+    sidebar.classList.remove("close", "hoverable");
+  });
+  
+  submenuItems.forEach((item, index) => {
+    item.addEventListener("click", () => {
+      item.classList.toggle("show_submenu");
+      submenuItems.forEach((item2, index2) => {
+        if (index !== index2) {
+          item2.classList.remove("show_submenu");
+        }
+      });
+    });
+  });
+  
+  if (window.innerWidth < 768) {
+    sidebar.classList.add("close");
+  }
+  
+  
+      </script>

@@ -1,0 +1,79 @@
+<% layout('./layouts/boilerplate') -%>
+
+<div class="row mt-3">
+    <h1 class="col-6 offset-3">Enter Contractor Details on AgroGuide</h1>
+    <div class="col-6 offset-3">
+        <form action="/contractor/apply" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            
+            <!-- Image Upload -->
+            <div class="mb-3">
+                <label for="image" class="form-label">Profile Image</label>
+                <input id="image" type="file" class="form-control" name="image">
+                <small class="form-text text-muted">Optional: Upload a profile image.</small>
+            </div>
+
+            <!-- Username -->
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input id="username" type="text" class="form-control" name="username" required>
+                <div class="valid-feedback">Username looks good</div>
+                <div class="invalid-feedback">Please enter a valid username</div>
+            </div> 
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" class="form-control" name="email" required>
+                <div class="invalid-feedback">Please enter a valid email</div>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-3">
+                <label for="pNumber" class="form-label">Phone Number</label>
+                <input id="pNumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" required>
+                <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
+            </div>
+
+            <!-- Aadhar -->
+            <div class="mb-3">
+                <label for="aadhar" class="form-label">Aadhar</label>
+                <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" required>
+                <div class="invalid-feedback">Please enter a valid 12-digit Aadhar number</div>
+            </div>
+
+            <!-- District -->
+            <div class="mb-3">
+                <label for="district" class="form-label">District</label>
+                <input id="district" type="text" class="form-control" name="district" required>
+                <div class="invalid-feedback">Please enter your district</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" type="password" class="form-control" name="password" required>
+            </div>
+
+            <!-- Submit Button -->
+            <button class="btn btn-dark">Apply</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        var forms = document.querySelectorAll('.needs-validation');
+
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>

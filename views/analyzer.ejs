@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>AgroGuide</title>
+    <link rel="stylesheet" href="/style_for_analyzer.css" />
+    <link rel="icon"  href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo_item ">
+        <i class="bx bx-menu" id="sidebarOpen"></i>
+        <a href="javascript:history.back()">
+          <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="logo">
+        </a>
+        <a href="javascript:history.back()">AgroGuide</a>
+      </div>
+    </nav>
+  
+    <div class="container">
+      <div class="chart-container">
+        <canvas id="barchart" width="1000" height="1000"> </canvas>
+      </div>
+      <div class="buttonstochange">
+        <div class="chart-div">
+          <button id="Crop1">Soyabean</button>
+          <button id="Crop2">Cotton</button>
+          <button id="Crop3">Wheat</button>
+          <button id="Crop4">Bajra</button>
+          <button id="Crop5">Maize</button>
+        </div>
+        <div class="main-button">
+          <button id="changeChart">Change Chart</button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+    <script src="/chart.js"></script>
+  </body>
+</html>

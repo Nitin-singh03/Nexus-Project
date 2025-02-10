@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Contractor Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/contractorStyle.css" />
+    <link rel="icon" href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="javascript:history.back()">
+                <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                <span style="color: green; font-weight: bold;">AgroGuide</span>
+            </a>
+        </div>
+    </nav>
+    <div class="row mt-3">
+        <h1 class="col-6 offset-3">Edit Contractor Profile</h1>
+        <div class="col-6 offset-3">
+            <form id="editProfileForm" action="/contractor/edit" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                
+                <!-- Phone Number -->
+                <div class="mb-3">
+                    <label for="Pnumber" class="form-label">Phone Number</label>
+                    <input id="Pnumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" value="<%= contractor.Pnumber %>" required>
+                    <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input id="email" type="email" class="form-control" name="email" value="<%= contractor.email %>" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                </div>
+
+                <!-- Aadhar Number -->
+                <div class="mb-3">
+                    <label for="aadhar" class="form-label">Aadhar Number</label>
+                    <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" value="<%= contractor.aadhar %>" required>
+                    <div class="invalid-feedback">Please enter a valid 12-digit Aadhar number.</div>
+                </div>
+
+                <!-- District -->
+                <div class="mb-3">
+                    <label for="district" class="form-label">District</label>
+                    <input id="district" type="text" class="form-control" name="district" value="<%= contractor.district %>" required>
+                    <div class="invalid-feedback">Please enter your district.</div>
+                </div>
+
+                <!-- Profile Image Upload -->
+                <div class="mb-3">
+                    <label for="image" class="form-label">Profile Image</label>
+                    <input id="image" type="file" class="form-control-file" name="image" accept="image/*">
+                    <div class="form-text">Upload an image for your profile.</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-dark">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            var forms = document.querySelectorAll('.needs-validation');
+
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+</body>
+</html>

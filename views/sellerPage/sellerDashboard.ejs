@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Listings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/sellerStyle.css" />
+    <link rel="icon"  href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+<body>
+<nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="javascript:history.back()">
+        <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+        <span style="color: green; font-weight: bold;">AgroGuide</span> 
+        </a>
+        <div>
+            <a href="/seller/edit" class="btn btn-dark">Edit Profile</a>
+        </div>
+    </div>
+</nav>
+
+
+
+<h1>Your Listings</h1>
+<a href="/product/new">
+    <button>Add new listing</button>
+</a>
+
+<div class="main-container">
+    <% if (products.length > 0) { %>
+        <% products.forEach(product => { %>
+            <a href="/product/<%= product._id %>" class="product-link">
+                <div class="in-content">
+                  <div class="img-div">
+                    <img src="<%= product.image %>" class="card-img" alt="<%= product.title %>">
+                  </div>
+                  <p class="card-title">&#x20b9; <%= product.price %></p>
+                  <p class="card-title"><%= product.title %></p>
+                  <p class="card-info"><%= product.Smalldescription %></p>
+                </div>
+              </a>
+        
+        <% }) %>
+    <% } else { %>
+        <p>No listings found. Please add a product.</p>
+    <% } %>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+</body>
+</html>

@@ -1,0 +1,92 @@
+<%- layout('/adminPage/layouts/boilerplate') -%>
+
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .card {
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .card img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 10px;
+        margin-right: 15px;
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card img {
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4">Product List</h1>
+    </div>
+
+    <div class="row">
+        <% products.forEach(product => { %>
+            <div class="col-12">
+                <div class="card">
+                    <img src="<%= product.image %>" alt="<%= product.title %>" class="img-fluid">
+
+                    <div class="card-body">
+                        <h5><%= product.title %></h5>
+                        <p><strong>Category:</strong> <%= product.category %></p>
+                        <p><strong>Price:</strong> ₹<%= product.price %></p>
+                        <p><strong>Owner Phone Number:</strong> <%= product.owner.Pnumber %></p>
+                        <p><strong>Owner Username:</strong> <%= product.owner.username %></p>
+                        <p><strong>Owner Email:</strong> <%= product.owner.email %></p>
+                    </div>
+
+                    <div>
+                        <a href="/product/<%= product._id %>" class="btn btn-primary">Visit</a>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+
+    <div class="pagination mt-4">
+        <% if (currentPage > 1) { %>
+            <a href="/admin/products?page=<%= currentPage - 1 %>" class="btn btn-outline-primary">Previous</a>
+        <% } else { %>
+            <span class="btn btn-outline-secondary disabled">Previous</span>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="/admin/products?page=<%= currentPage + 1 %>" class="btn btn-outline-primary">Next</a>
+        <% } else { %>
+            <span class="btn btn-outline-secondary disabled">Next</span>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<% layout('/adminPage/layouts/boilerplate') -%>
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+    <div class="stats-grid">
+        <div class="stats-card">
+            <h2>Total Users</h2>
+            <p class="count" data-count="<%= userCount %>">0</p>
+            <p class="additional-info">View details about the total number of registered users.</p>
+            <a href="/admin/users" class="visit-btn">Visit</a>
+        </div>
+        <div class="stats-card">
+            <h2>Total Contractors</h2>
+            <p class="count" data-count="<%= contractorValidCount %>">0</p>
+            <p class="additional-info">Check the details of valid contractors.</p>
+            <a href="/admin/contractors" class="visit-btn">Visit</a>
+        </div>
+        <div class="stats-card">
+            <h2>Total Sellers</h2>
+            <p class="count" data-count="<%= sellerValidCount %>">0</p>
+            <p class="additional-info">View the list of valid sellers.</p>
+            <a href="/admin/sellers" class="visit-btn">Visit</a>
+        </div>
+        <div class="stats-card">
+            <h2>Total Contracts</h2>
+            <p class="count" data-count="<%= contractCount %>">0</p>
+            <p class="additional-info">See all contracts in the system.</p>
+            <a href="/admin/contracts" class="visit-btn">Visit</a>
+        </div>
+        <div class="stats-card">
+            <h2>Total Products</h2>
+            <p class="count" data-count="<%= productCount %>">0</p>
+            <p class="additional-info">Browse all the products listed in the system.</p>
+            <a href="/admin/products" class="visit-btn">Visit</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const counters = document.querySelectorAll('.count');
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-count');
+                const count = +counter.innerText;
+                const increment = target / 200;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(updateCount, 50);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCount();
+        });
+    });
+</script>

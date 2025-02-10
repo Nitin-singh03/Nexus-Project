@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="/sellerStyle.css" />
+    <link rel="icon"  href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="javascript:history.back()">
+            <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+            <span style="color: green; font-weight: bold;">AgroGuide</span> 
+            </a>
+        </div>
+    </nav>
+<div class="row mt-3">
+    <h1 class="col-6 offset-3">Enter Product Details on AgroGuide</h1>
+    <div class="col-6 offset-3">
+        <form action="/product/new" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            
+            <!-- Image Upload -->
+            <div class="mb-3">
+                <label for="image" class="form-label">Product Image</label>
+                <input id="image" type="file" class="form-control" name="image">
+                <small class="form-text text-muted">Optional: Upload a product image.</small>
+            </div>
+
+            <!-- Title -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Product Title</label>
+                <input id="title" type="text" class="form-control" name="title" required>
+                <div class="valid-feedback">Title looks good</div>
+                <div class="invalid-feedback">Please enter a valid title</div>
+            </div> 
+
+            <!-- Large Description -->
+            <div class="mb-3">
+                <label for="Largedescription" class="form-label">Large Description</label>
+                <textarea id="Largedescription" class="form-control" name="Largedescription"></textarea>
+                <small class="form-text text-muted">Provide a detailed description of the product.</small>
+            </div>
+
+            <!-- Small Description -->
+            <div class="mb-3">
+                <label for="Smalldescription" class="form-label">Small Description</label>
+                <input id="Smalldescription" type="text" class="form-control" name="Smalldescription" required>
+                <div class="invalid-feedback">Please enter a short description</div>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" class="form-select" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="Seeds">Seeds</option>
+                    <option value="Plants">Plants</option>
+                    <option value="Fertilizers">Fertilizers</option>
+                    <option value="Pesticides and Insecticides">Pesticides and Insecticides</option>
+                    <option value="Soil Amendments">Soil Amendments</option>
+                    <option value="Tools and Equipment">Tools and Equipment</option>
+                    <option value="Plant Protection">Plant Protection</option>
+                    <option value="Irrigation Supplies">Irrigation Supplies</option>
+                    <option value="Agricultural Chemicals">Agricultural Chemicals</option>
+                    <option value="Greenhouse Supplies">Greenhouse Supplies</option>
+                </select>
+                <div class="invalid-feedback">Please select a product category</div>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-3">
+                <label for="price" class="form-label">Price (in ₹)</label>
+                <input id="price" type="number" class="form-control" name="price">
+                <small class="form-text text-muted">Enter the product price (optional).</small>
+            </div>
+
+            <!-- Submit Button -->
+            <button class="btn btn-dark">Submit Product</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation(); 
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script> 
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+</body>
+</html>

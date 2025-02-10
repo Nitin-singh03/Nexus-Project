@@ -1,0 +1,133 @@
+<%- layout('/adminPage/layouts/boilerplate') -%>
+
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 5px 0;
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .modal-content {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4">User List</h1>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar mb-4 text-center">
+        <form action="/admin/users" method="get" class="form-inline justify-content-center">
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Search by Phone Number"
+                value="<%= searchQuery %>"
+                style="width: 300px;"
+            >
+            <button type="submit" class="btn btn-primary ml-2">Search</button>
+        </form>
+    </div>
+
+    <% if (searchQuery) { %>
+        <div id="search-modal" class="modal d-block" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Search Result</h5>
+                        <button type="button" class="close" onclick="closeModal()">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <% if (searchedUser) { %>
+                            <p><strong>Phone Number:</strong> <%= searchedUser.Pnumber %></p>
+                            <p><strong>Username:</strong> <%= searchedUser.username %></p>
+                            <p><strong>Email:</strong> <%= searchedUser.email %></p>
+                        <% } else { %>
+                            <p class="text-danger">User with phone number "<%= searchQuery %>" not found.</p>
+                        <% } %>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <div class="row">
+        <% users.forEach(user => { %>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong>Phone Number:</strong> <%= user.Pnumber %></p>
+                        <p><strong>Username:</strong> <%= user.username %></p>
+                        <p><strong>Email:</strong> <%= user.email %></p>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+
+    <div class="pagination mt-4">
+        <% if (currentPage > 1) { %>
+            <a href="/admin/users?page=<%= currentPage - 1 %>" class="btn btn-outline-primary">Previous</a>
+        <% } else { %>
+            <span class="btn btn-outline-secondary disabled">Previous</span>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="/admin/users?page=<%= currentPage + 1 %>" class="btn btn-outline-primary">Next</a>
+        <% } else { %>
+            <span class="btn btn-outline-secondary disabled">Next</span>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    function closeModal() {
+        const modal = document.getElementById("search-modal");
+        if (modal) {
+            modal.classList.remove("d-block");
+            modal.classList.add("d-none");
+        }
+    }
+</script>

@@ -1,0 +1,156 @@
+<% layout('/adminPage/layouts/boilerplate') -%>
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Contractor Requests</h1>
+    <div class="contractors-list">
+        <% contractors.forEach(contractor => { %>
+            <div class="contractor-card">
+                <div class="contractor-photo">
+                    <img src="<%= contractor.image %>" alt="Contractor Image" class="contractor-img">
+                </div>
+
+                <div class="contractor-details">
+                    <h3><%= contractor.username %></h3>
+                    <p>Email: <%= contractor.email %></p>
+                    <p>District: <%= contractor.district %></p>
+                    <p>Aadhar: <%= contractor.aadhar %></p>
+                    <p>Phone No.: <%= contractor.Pnumber %></p>
+                </div>
+
+                <div class="contractor-actions">
+                    <a href="/admin/accept-contractor/<%= contractor._id %>" class="btn accept-btn">Accept</a>
+                    <a href="/admin/reject-contractor/<%= contractor._id %>" class="btn reject-btn">Reject</a>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f4f4f9;
+        font-family: Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+
+    .contractors-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .contractor-card {
+        background: #ffffff;
+        color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 900px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+        margin-bottom: 20px;
+    }
+
+    .contractor-card:hover {
+        transform: scale(1.05);
+    }
+
+    .contractor-photo {
+        flex: 1;
+        max-width: 150px;
+    }
+
+    .contractor-img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .contractor-details {
+        flex: 2;
+        padding-left: 20px;
+        text-align: center;
+    }
+
+    .contractor-details h3 {
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .contractor-details p {
+        margin: 5px 0;
+    }
+
+    .contractor-actions {
+        flex: 1;
+        text-align: right;
+        padding-left: 20px;
+    }
+
+    .btn {
+        padding: 12px 18px;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    .accept-btn {
+        background: #28a745;
+    }
+
+    .reject-btn {
+        background: #dc3545;
+    }
+
+    .btn:hover {
+        opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+        .contractor-card {
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .contractor-photo {
+            max-width: 120px;
+            margin-bottom: 15px;
+        }
+
+        .contractor-details {
+            padding-left: 0;
+        }
+
+        .contractor-actions {
+            margin-top: 10px;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .contractor-card {
+            padding: 15px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+        }
+    }
+</style>

@@ -1,0 +1,2 @@
+# AgroGuide
+Agricultural Marketplace Platform

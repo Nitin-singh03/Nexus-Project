@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="/sellerStyle.css" />
+    <link rel="icon"  href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="javascript:history.back()">
+            <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+            <span style="color: green; font-weight: bold;">AgroGuide</span> 
+            </a>
+        </div>
+    </nav>
+
+    <div class="row mt-3">
+        <h1 class="col-6 offset-3">Edit Product</h1>
+        <div class="col-6 offset-3">
+            <form id="editProductForm" action="/product/edit/<%= product._id %>" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <!-- Product Title -->
+                <div class="mb-3">
+                    <label for="title" class="form-label">Product Title</label>
+                    <input id="title" type="text" class="form-control" name="title" value="<%= product.title %>" required>
+                    <div class="invalid-feedback">Please enter the product title</div>
+                </div>
+
+                <!-- Price -->
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price (₹)</label>
+                    <input id="price" type="number" class="form-control" name="price" value="<%= product.price %>" required>
+                    <div class="invalid-feedback">Please enter the product price</div>
+                </div>
+
+                <!-- Small Description -->
+                <div class="mb-3">
+                    <label for="small-description" class="form-label">Small Description</label>
+                    <textarea id="small-description" class="form-control" name="Smalldescription" rows="2" required><%= product.Smalldescription %></textarea>
+                    <div class="invalid-feedback">Please enter a small description for the product</div>
+                </div>
+
+                <!-- Large Description -->
+                <div class="mb-3">
+                    <label for="large-description" class="form-label">Large Description</label>
+                    <textarea id="large-description" class="form-control" name="Largedescription" rows="4"><%= product.Largedescription %></textarea>
+                    <div class="invalid-feedback">Please enter a detailed description</div>
+                </div>
+
+                <!-- Category Dropdown -->
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" class="form-select" name="category" required>
+                        <option value="" disabled>Select a category</option>
+                        <option value="Seeds" <%= product.category === 'Seeds' ? 'selected' : '' %>>Seeds</option>
+                        <option value="Plants" <%= product.category === 'Plants' ? 'selected' : '' %>>Plants</option>
+                        <option value="Fertilizers" <%= product.category === 'Fertilizers' ? 'selected' : '' %>>Fertilizers</option>
+                        <option value="Pesticides and Insecticides" <%= product.category === 'Pesticides and Insecticides' ? 'selected' : '' %>>Pesticides and Insecticides</option>
+                        <option value="Soil Amendments" <%= product.category === 'Soil Amendments' ? 'selected' : '' %>>Soil Amendments</option>
+                        <option value="Tools and Equipment" <%= product.category === 'Tools and Equipment' ? 'selected' : '' %>>Tools and Equipment</option>
+                        <option value="Plant Protection" <%= product.category === 'Plant Protection' ? 'selected' : '' %>>Plant Protection</option>
+                        <option value="Irrigation Supplies" <%= product.category === 'Irrigation Supplies' ? 'selected' : '' %>>Irrigation Supplies</option>
+                        <option value="Agricultural Chemicals" <%= product.category === 'Agricultural Chemicals' ? 'selected' : '' %>>Agricultural Chemicals</option>
+                        <option value="Greenhouse Supplies" <%= product.category === 'Greenhouse Supplies' ? 'selected' : '' %>>Greenhouse Supplies</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a category</div>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload Product Image</label>
+                    <input id="image" type="file" class="form-control" name="image" accept="image/*">
+                    <div class="invalid-feedback">Please upload a valid image</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-dark">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault(); 
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated'); 
+                    }, false);
+                });
+        })();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script> <!-- Popper.js -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> <!-- Bootstrap JS -->
+</body>
+</html>

@@ -1,0 +1,21 @@
+<%- layout('/adminPage/layouts/boilerplate') -%>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4"><%= contractor.username %>'s Listings</h1>
+    </div>
+
+    <div class="row">
+        <% contracts.forEach(contract => { %>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong>Area:</strong> <%= contract.area %> acres</p>
+                        <p><strong>Rent:</strong> <%= contract.rent %> <%= contract.rent_type %></p>
+                        <p><strong>Terms:</strong> <%= contract.terms %></p>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>

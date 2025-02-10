@@ -1,0 +1,77 @@
+<%- layout('/adminPage/layouts/boilerplate') -%>
+
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .card {
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4">Contract List</h1>
+    </div>
+
+    <div class="row">
+        <% contracts.forEach(contract => { %>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong>Area:</strong> <%= parseFloat(contract.area).toFixed(2) %> acres</p>
+                        <p><strong>Rent:</strong> ₹<%= parseFloat(contract.rent).toFixed(2) %> <%= contract.rent_type %></p>
+                        <p><strong>Terms:</strong> <%= contract.terms %></p>
+                        <% if (contract.owner) { %>
+                            <p><strong>Owner Username:</strong> <%= contract.owner.username %></p>
+                            <p><strong>Owner Email:</strong> <%= contract.owner.email %></p>
+                            <p><strong>Owner Phone:</strong> <%= contract.owner.Pnumber %></p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+
+    <div class="pagination mt-4">
+        <% if (currentPage > 1) { %>
+            <a href="/admin/contracts?page=<%= currentPage - 1 %>" class="btn btn-outline-primary">Previous</a>
+        <% } else { %>
+            <span class="btn btn-outline-secondary disabled">Previous</span>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="/admin/contracts?page=<%= currentPage + 1 %>" class="btn btn-outline-primary">Next</a>
+        <% } else { %>
+            <span class="btn btn-outline-secondary disabled">Next</span>
+        <% } %>
+    </div>
+</div>

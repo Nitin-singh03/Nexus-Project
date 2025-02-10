@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroGuide</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Bootstrap CSS -->
+    <link href="/commodity_price.css" rel="stylesheet">
+    <link rel="icon"  href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+<body>
+    <nav class="navbar">
+          <div class="logo_item">
+            <i class="bx bx-menu" id="sidebarOpen"></i> 
+            <a href="javascript:history.back()">
+              <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="">
+            </a>
+            <a href="javascript:history.back()">AgroGuide</a></div>
+            <div class="navbar-nav">
+              <% if (currUser) { %>
+                <a class="nav-link" href="/edit"><b>Edit Profile</b></a>
+                <a class="nav-link" href="/logout"><b>Log out</b></a>
+              <% } else if (sellerId) { %>
+                <a class="nav-link" href="/seller/dashboard"><b>Seller Dashboard</b></a>
+                <a class="nav-link" href="/logout"><b>Log out</b></a>
+              <% } else if (contractorId) { %>
+                <a class="nav-link" href="/contractor/dashboard"><b>Contractor Dashboard</b></a>
+                <a class="nav-link" href="/logout"><b>Log out</b></a>
+              <% } else { %>
+                <a class="nav-link" href="/signup"><b>Sign up</b></a>
+                <a class="nav-link" href="/login"><b>Log in</b></a>
+              <% } %>
+          </div>
+    </nav>
+  
+    <h1>Progressive Filter for Commodity Prices</h1>
+
+    <form id="filterForm">
+        <label for="state">Select State:</label>
+        <select id="state" required>
+            <option value="" disabled selected>Choose a state</option>
+        </select>
+
+        <label for="district">Select District:</label>
+        <select id="district" required>
+            <option value="" disabled selected>Choose a district</option>
+        </select>
+
+        <label for="commodity">Select Commodity:</label>
+        <select id="commodity" required>
+            <option value="" disabled selected>Choose a commodity</option>
+        </select>
+
+        <label for="market">Select Market:</label>
+        <select id="market" required>
+            <option value="" disabled selected>Choose a market</option>
+        </select>
+
+        <label for="variety">Select Variety:</label>
+        <select id="variety" required>
+            <option value="" disabled selected>Choose a variety</option>
+        </select>
+
+        <button type="submit">Get Prices</button>
+    </form>
+
+    <div id="output"></div>
+
+    <script>
+        const apiKey = "579b464db66ec23bdd000001cdc3b564546246a772a26393094f5645";  // API key
+        const baseUrl = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070";  // Base URL
+        const stateSelect = document.getElementById("state");
+        const districtSelect = document.getElementById("district");
+        const commoditySelect = document.getElementById("commodity");
+        const marketSelect = document.getElementById("market");
+        const varietySelect = document.getElementById("variety");
+        const form = document.getElementById("filterForm");
+        const output = document.getElementById("output");
+
+        let fullData = [];
+
+        async function fetchData() {
+            const params = new URLSearchParams({
+                "api-key": apiKey,
+                format: "json",
+                limit: "10000000",
+                offset: "0" 
+            });
+
+            const response = await fetch(`${baseUrl}?${params}`);
+            if (!response.ok) throw new Error(`API error: ${response.status}`);
+            const data = await response.json();
+            fullData = data.records; 
+        }
+
+        async function populateStates() {
+            try {
+                await fetchData(); 
+                const states = [...new Set(fullData.map(record => record.state))];
+                states.forEach(state => {
+                    const option = document.createElement("option");
+                    option.value = state;
+                    option.textContent = state;
+                    stateSelect.appendChild(option);
+                });
+            } catch (error) {
+                output.textContent = `Error fetching states: ${error.message}`;
+            }
+        }
+
+        function updateOptions(selectElement, filterFunction, textContentKey) {
+            selectElement.innerHTML = `<option value="" disabled selected>Choose</option>`;
+            const items = [...new Set(filterFunction(fullData))];
+            items.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item;
+                option.textContent = item;
+                selectElement.appendChild(option);
+            });
+        }
+
+        stateSelect.addEventListener("change", () => {
+            updateOptions(districtSelect, data => data.filter(record => record.state === stateSelect.value).map(record => record.district));
+            commoditySelect.innerHTML = `<option value="" disabled selected>Choose a commodity</option>`;
+            marketSelect.innerHTML = `<option value="" disabled selected>Choose a market</option>`;
+            varietySelect.innerHTML = `<option value="" disabled selected>Choose a variety</option>`;
+        });
+
+        districtSelect.addEventListener("change", () => {
+            updateOptions(commoditySelect, data => data.filter(record => record.state === stateSelect.value && record.district === districtSelect.value).map(record => record.commodity));
+        });
+
+        commoditySelect.addEventListener("change", () => {
+            updateOptions(marketSelect, data => data.filter(record => record.state === stateSelect.value && record.district === districtSelect.value && record.commodity === commoditySelect.value).map(record => record.market));
+        });
+
+        marketSelect.addEventListener("change", () => {
+            updateOptions(varietySelect, data => data.filter(record => record.state === stateSelect.value && record.district === districtSelect.value && record.commodity === commoditySelect.value && record.market === marketSelect.value).map(record => record.variety));
+        });
+
+        form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const filteredData = fullData.filter(record =>
+                    record.state === stateSelect.value &&
+                    record.district === districtSelect.value &&
+                    record.commodity === commoditySelect.value &&
+                    record.market === marketSelect.value &&
+                    record.variety === varietySelect.value
+                );
+
+                output.innerHTML = ""; // Clear previous results
+
+                if (filteredData.length > 0) {
+                    filteredData.forEach(record => {
+                        const card = document.createElement("div");
+                        card.className = "card p-3 mb-3";
+
+                        card.innerHTML = `
+                <h3>${record.commodity}</h3>
+                    <p><strong>Min Price:</strong> <h1>${record.min_price} INR</h1></p>
+                    <p><strong>Max Price:</strong> <h1>${record.max_price} INR</h1></p>
+                <p><strong>State:</strong> ${record.state}</p>
+                <p><strong>District:</strong> ${record.district}</p>
+                <p><strong>Market:</strong> ${record.market}</p>
+                <p><strong>Variety:</strong> ${record.variety}</p>
+                <p><strong>Price:</strong> ${record.modal_price} INR</p>
+                <p><strong>Grade:</strong> ${record.grade}</p>
+                <p><strong>Arrival Date:</strong> ${record.arrival_date}</p>
+            `;
+
+                        output.appendChild(card);
+                    });
+
+                    // Scroll to the output div
+                    output.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    output.innerHTML = "<p>No prices found for the selected filters.</p>";
+                }
+            });
+
+
+        populateStates();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script> 
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

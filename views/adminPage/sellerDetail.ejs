@@ -1,0 +1,23 @@
+<%- layout('/adminPage/layouts/boilerplate') -%>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4">Product Listings</h1>
+    </div>
+
+    <div class="row">
+        <% products.forEach(product => { %>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <img src="<%= product.image %>" class="card-img-top" alt="<%= product.title %> image" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= product.title %></h5>
+                        <p><strong>Category:</strong> <%= product.category %></p>
+                        <p><strong>Description:</strong> <%= product.Smalldescription %></p>
+                        <p><strong>Price:</strong> $<%= product.price %></p>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Contract</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/sellerStyle.css" />
+    <link rel="icon" href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="javascript:history.back()">
+                <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                <span style="color: green; font-weight: bold;">AgroGuide</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="row mt-3">
+        <h1 class="col-6 offset-3">Edit Contract</h1>
+        <div class="col-6 offset-3">
+            <form id="editContractForm" action="/contract/edit/<%= contract._id %>" method="POST" class="needs-validation" novalidate>
+                <!-- Area -->
+                <div class="mb-3">
+                    <label for="area" class="form-label">Area (in sq. units)</label>
+                    <input id="area" type="number" step="0.01" class="form-control" name="area" value="<%= contract.area %>" required>
+                    <div class="invalid-feedback">Please enter the area.</div>
+                </div>
+
+                <!-- Rent -->
+                <div class="mb-3">
+                    <label for="rent" class="form-label">Rent</label>
+                    <input id="rent" type="number" step="0.01" class="form-control" name="rent" value="<%= contract.rent %>" required>
+                    <div class="invalid-feedback">Please enter the rent.</div>
+                </div>
+
+                <!-- Rent Type -->
+                <div class="mb-3">
+                    <label for="rent_type" class="form-label">Rent Type</label>
+                    <select id="rent_type" class="form-select" name="rent_type" required>
+                        <option value="" disabled>Select rent type</option>
+                        <option value="Rs/month" <%= contract.rent_type === 'Rs/month' ? 'selected' : '' %>>Rs/month</option>
+                        <option value="percentage" <%= contract.rent_type === 'percentage' ? 'selected' : '' %>>Percentage</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a rent type.</div>
+                </div>
+
+                <!-- Terms -->
+                <div class="mb-3">
+                    <label for="terms" class="form-label">Terms</label>
+                    <textarea id="terms" class="form-control" name="terms" rows="4" required><%= contract.terms %></textarea>
+                    <div class="invalid-feedback">Please enter the terms.</div>
+                </div>
+
+                <button type="submit" class="btn btn-dark">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="menu_content">
+        <ul class="menu_items">
+          <div class="menu_title menu_dahsboard"></div>
+  
+          <li class="item">
+            <div class="nav_link submenu_item">
+              <span class="navlink_icon">
+                <i class="bx bx-home-alt"></i>
+              </span>
+              <a href="/" class="Home"></a>
+              <span class="navlink">Home</span>
+            </div>
+          </li>
+          <li class="item">
+            <a href="/contract_search" class="nav_link submenu_item">
+              <span class="navlink_icon">
+                <i class="fa-solid fa-file-contract"></i>
+              </span>
+              <span class="navlink">Contact Contractors</span>
+            </a>
+          </li>
+  
+          <li class="item">
+            <div class="nav_link submenu_item">
+              <span class="navlink_icon">
+                <i class="bx bx-grid-alt"></i>
+              </span>
+              <span class="navlink">Overview</span>
+              <i class="bx bx-chevron-right arrow-left"></i>
+            </div>
+
+            <ul class="menu_items submenu">
+              <% let uniqueCategories = [...new Set(products.map(p => p.category))]; %>
+              <% uniqueCategories.forEach(category => { %>
+                <li><a href="#<%= category.replace(/\s+/g, '-') %>" class="nav_link sublink"><%= category %></a></li>
+              <% }); %>
+            </ul>
+          </li>
+  
+          <li class="item">
+            <a href="/predict" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bxs-magic-wand"></i>
+              </span>
+              <span class="navlink">Prediction</span>
+            </a>
+          </li>
+        </ul>
+        <ul class="menu_items">
+          <div class="menu_title menu_editor"></div>
+          <li class="item">
+            <a href="/seller/status" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-flag"></i>
+              </span>
+              <span class="navlink">Check for Seller</span>
+            </a>
+          </li>
+          <li class="item">
+            <a href="#" class="nav_link">
+              <span class="navlink_icon">
+                <i class="fa-solid fa-file-contract"></i>
+              </span>
+              <span class="navlink">Check for Contractor</span>
+            </a>
+          </li>
+        </ul>
+        <ul class="menu_items">
+          <div class="menu_title menu_setting"></div>
+          <li class="item">
+            <a href="/seller/apply" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-flag"></i>
+              </span>
+              <span class="navlink">Become Seller</span>
+            </a>
+          </li>
+          <li class="item">
+            <a href="/applyCo" class="nav_link">
+              <span class="navlink_icon">
+                <i class="fa-solid fa-file-contract"></i>
+              </span>
+              <span class="navlink">Become Contractor</span>
+            </a>
+          </li>
+        </ul>
+  
+        <div class="bottom_content">
+          <div class="bottom expand_sidebar">
+            <span> Expand</span>
+            <i class='bx bx-log-in' ></i>
+          </div>
+          <div class="bottom collapse_sidebar">
+            <span> Collapse</span>
+            <i class='bx bx-log-out'></i>
+          </div>
+        </div>
+      </div>
+    </nav>
+      </div>
+    </nav>
+
+    

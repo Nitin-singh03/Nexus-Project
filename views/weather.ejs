@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroGuide</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/sellerStyle.css" />
+    <link rel="icon" href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+    <style>
+        body {
+            /* background-image: url('https://images.unsplash.com/photo-1511747779856-fd751a79aa22?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); */
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .weather-card {
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15); 
+            padding: 15px;
+            color: #333;
+            transition: transform 0.2s;
+            min-width: 100px;
+            backdrop-filter: blur(10px); 
+            /* border: 1px solid rgba(255, 255, 255, 0.3);  */
+            box-shadow: 12px 12px 12px rgba(0,0,0,0.1) ,
+            -10px -10px 10px white ;
+        }
+
+        .weather-card:hover {
+            box-shadow: 12px 12px 12px rgba(0,0,0,0.1) inset,
+            -10px -10px 10px white inset;
+            transform: scale(1.02);
+        }
+
+        h1, h3 {
+            color: #333;
+        }
+
+        .icon {
+            font-size: 18px;
+            color: #ffa500;
+        }
+
+        .forecast-row {
+            background-color: #f9f9f9;
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .forecast-row .weather-card {
+            flex: 0 0 auto;
+            width: 134px;
+            margin-right: 8px;
+        }
+
+        .btn-custom {
+            border-radius: 15px;
+            margin: 8px;
+        }
+
+        .form-inline input {
+            max-width: 200px;
+        }
+
+        @media (max-width: 768px) {
+            h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="javascript:history.back()">
+                <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                <span style="color: green; font-weight: bold;">AgroGuide</span> <!-- AgroGuide in green -->
+            </a>
+        </div>
+    </nav>
+<div class="container mt-4">
+    <h1 class="text-center">Weather Forecast</h1>
+    <form id="weather-form" class="form-inline justify-content-center mb-3">
+        <input type="text" id="city-input" class="form-control mr-2" placeholder="Enter city name" required>
+        <button type="submit" class="btn btn-primary btn-custom">Get Weather</button>
+        <button type="button" id="current-location-btn" class="btn btn-secondary btn-custom">Use Current Location</button>
+    </form>
+    
+    <div id="current-weather" class="row mt-3"></div>
+    <h3 id="hourly-title" class="text-center mt-4 d-none">Hourly Forecast</h3>
+    <div id="hourly-forecast" class="forecast-row row mt-2"></div>
+    <h3 id="weekly-title" class="text-center mt-4 d-none">Weekly Forecast</h3>
+    <div id="weekly-forecast" class="forecast-row row mt-2"></div>
+</div>
+
+<script>
+    document.getElementById('weather-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const city = document.getElementById('city-input').value;
+        getWeather(city);
+    });
+
+    document.getElementById('current-location-btn').addEventListener('click', function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const { latitude, longitude } = position.coords;
+                getWeatherByCoords(latitude, longitude);
+            }, () => {
+                alert('Unable to retrieve your location.');
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    });
+
+    async function getWeather(city) {
+        const weather_api = '529572138c52c3c5dc8d45265b3ee846';
+        const geoUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weather_api}`;
+
+        try {
+            const geoResponse = await fetch(geoUrl);
+            const geoData = await geoResponse.json();
+
+            if (geoData.cod !== 200) {
+                throw new Error(geoData.message);
+            }
+            displayCurrentWeather(geoData);
+            const { lat, lon } = geoData.coord;
+            await fetchWeatherData(lat, lon);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function getWeatherByCoords(lat, lon) {
+        const weather_api = '529572138c52c3c5dc8d45265b3ee846';
+        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weather_api}`;
+
+        try {
+            const weatherResponse = await fetch(weatherUrl);
+            const weatherData = await weatherResponse.json();
+
+            if (weatherData.cod !== 200) {
+                throw new Error(weatherData.message);
+            }
+            displayCurrentWeather(weatherData);
+            await fetchWeatherData(lat, lon);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function fetchWeatherData(lat, lon) {
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset&timezone=auto`;
+
+        try {
+            const weatherResponse = await fetch(weatherUrl);
+            const weatherData = await weatherResponse.json();
+
+            displayHourlyForecast(weatherData);
+            displayWeeklyForecast(weatherData);
+        } catch (error) {
+            alert('Error fetching weather data.');
+        }
+    }
+
+    function displayCurrentWeather(weatherData) {
+        const currentWeatherContainer = document.getElementById('current-weather');
+        currentWeatherContainer.innerHTML = '';
+
+        const { coord, weather, main, visibility, wind, clouds, sys, name } = weatherData;
+
+        const weatherInfo = [
+            { title: "Coordinates", value: `${coord.lat}, ${coord.lon}`, icon: "fa-solid fa-map-marker-alt" },
+            { title: "Temperature", value: `${(main.temp - 273.15).toFixed(2)} °C`, icon: "fa-solid fa-temperature-three-quarters" },
+            { title: "Wind Speed", value: `${wind.speed} m/s`, icon: "fa-solid fa-wind" },
+            { title: "Humidity", value: `${main.humidity}%`, icon: "fa-solid fa-droplet" },
+            { title: "Clouds", value: `${clouds.all}%`, icon: "fa-solid fa-cloud" },
+            { title: "Visibility", value: `${(visibility / 1000).toFixed(2)} km`, icon: "fas fa-eye" },
+            { title: "Sunrise", value: `${new Date(sys.sunrise * 1000).toLocaleTimeString()}`, icon: "fa-solid fa-clock" },
+            { title: "Sunset", value: `${new Date(sys.sunset * 1000).toLocaleTimeString()}`, icon: "fa-solid fa-clock" },
+            { title: "Weather", value: weather[0].description, icon: "fa-solid fa-info-circle" }
+        ];
+
+        weatherInfo.forEach(info => {
+            const cardHTML = `
+                <div class="col-md-4 weather-card text-center">
+                    <h6><i class="${info.icon} icon"></i> ${info.title}</h6>
+                    <p>${info.value}</p>
+                </div>
+            `;
+            currentWeatherContainer.innerHTML += cardHTML;
+        });
+    }
+
+function displayHourlyForecast(weatherData) {
+    const hourlyForecastContainer = document.getElementById('hourly-forecast');
+    hourlyForecastContainer.innerHTML = '';
+    document.getElementById('hourly-title').classList.remove('d-none');
+
+    const currentHour = new Date().getHours();
+
+    for (let index = 0; index < 24; index++) {
+        const hour = (currentHour + index) % 24;
+        const dateTime = new Date();
+        dateTime.setHours(hour);
+        const options = { hour: '2-digit', minute: '2-digit', hour12: false };
+        const formattedTime = dateTime.toLocaleString('en-US', options);
+
+        const temp = weatherData.hourly.temperature_2m[index] !== undefined 
+            ? weatherData.hourly.temperature_2m[index].toFixed(2) 
+            : 0;
+
+        const cardHTML = `
+            <div class="col-md-2 weather-card text-center">
+                <h6><i class="fa-solid fa-clock icon"></i> ${formattedTime}</h6>
+                <p>${temp} °C</p>
+            </div>
+        `;
+        hourlyForecastContainer.innerHTML += cardHTML;
+    }
+}
+
+
+
+    function displayWeeklyForecast(weatherData) {
+        const weeklyForecastContainer = document.getElementById('weekly-forecast');
+        weeklyForecastContainer.innerHTML = '';
+        document.getElementById('weekly-title').classList.remove('d-none');
+
+        weatherData.daily.temperature_2m_max.forEach((maxTemp, index) => {
+            const minTemp = weatherData.daily.temperature_2m_min[index];
+            const date = new Date();
+            date.setDate(date.getDate() + index);
+
+            const options = { weekday: 'short', month: 'short', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options);
+
+            const cardHTML = `
+                <div class="col-md-2 weather-card text-center">
+                    <h6>${formattedDate}</h6>
+                    <p>Max: ${maxTemp.toFixed(2)} °C</p>
+                    <p>Min: ${minTemp.toFixed(2)} °C</p>
+                </div>
+            `;
+            weeklyForecastContainer.innerHTML += cardHTML;
+        });
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

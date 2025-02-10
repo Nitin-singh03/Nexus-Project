@@ -1,0 +1,240 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.product-container {
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1200px;
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.product-container:hover {
+    transform: scale(1.02);
+}
+
+.product-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+.product-image img {
+    max-width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: transform 0.3s ease;
+    object-fit: cover;
+    height: 100%;
+}
+
+.product-image img:hover {
+    transform: scale(1.05);
+}
+
+.product-details {
+    flex: 2;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-details h1 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.product-details p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.product-details h2 {
+    margin-top: 30px;
+    font-size: 1.8em;
+    color: #333;
+    border-top: 2px solid #ddd;
+    padding-top: 15px;
+    font-weight: 600;
+}
+
+.product-details strong {
+    color: #333;
+}
+
+.product-details p strong {
+    color: #222;
+}
+
+.button-container {
+    margin-top: 20px;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.mail{
+    background-color: #007bff;
+}
+
+.mail:hover {
+    background-color: #0056b3;
+}
+
+.edit{
+    background-color: #e7be35;
+}
+
+.edit:hover {
+    background-color: #ffd500;
+}
+
+.delete{
+    background-color: #f44444;
+}
+
+.delete:hover {
+    cursor: pointer;
+    background-color: #f50d0d;
+}
+
+.review-container{
+    margin: 10px;
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    max-width: 1200px;
+}
+
+.review-container {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.review-form {
+    display: none;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.star-rating label {
+    font-size: 2rem;
+    color: #ddd;
+    transition: color 0.3s ease-in-out;
+}
+
+.star-rating input {
+    display: none;
+}
+
+/* Hover effect: Highlight stars */
+.star-rating label:hover,
+.star-rating label:hover~label {
+    color: gold;
+}
+
+/* Click effect: Keep selected stars */
+.star-rating input:checked~label {
+    color: gold;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    resize: none;
+}
+
+.button.submit-review {
+    background: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.button.submit-review:hover {
+    background: #218838;
+}
+
+.button.mail.review-btn {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.button.mail.review-btn:hover {
+    background: #0056b3;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    font-size: 2rem;
+    gap: 5px;
+}
+
+@media screen and (max-width: 768px) {
+    .product-container {
+        flex-direction: column;
+    }
+    body{
+        height: 100%;
+    }
+}

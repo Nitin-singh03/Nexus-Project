@@ -1,0 +1,131 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa; /* Light background */
+    color: #333; /* Dark text color */
+    margin: 0;
+    padding: 0;
+}
+
+/* Add shadow to the navbar */
+.navbar {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    width: 100%;
+}
+
+h1 {
+    font-family: 'Roboto', sans-serif; /* Use Roboto font for the heading */
+    font-size: 2rem; /* Larger font size */
+    text-align: center;
+    margin-top: 20px;
+    color: #3b4c60; /* Blue color for the title */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+}
+
+button {
+    background-color: #4A90E2; /* Blue button */
+    color: white; /* White text */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.3s ease;
+    margin: 20px auto; /* Centering the button */
+    display: block; /* Make button a block element for centering */
+    text-decoration: none; /* Ensure no underline */
+}
+
+button:hover {
+    background-color: #357ABD; /* Darker blue on hover */
+    text-decoration: none; /* Remove the underline on hover */
+}
+
+/* Styling for links that are buttons */
+.nav-link {
+    background-color: #4A90E2; /* Blue background for the nav link */
+    color: white; /* White text */
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 11px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    text-decoration: none; /* Remove underline */
+}
+
+.nav-link:hover {
+    background-color: #357ABD; /* Darker blue on hover */
+    text-decoration: none; /* Remove underline on hover */
+}
+
+/* Main container with cards */
+.main-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center; /* Center the cards */
+}
+
+.in-content {
+    height: 350px;
+    width: 220px;
+    margin: 20px;
+    background-color: rgb(238, 238, 238);
+    border-radius: 5px;
+    transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+    padding: 0.5rem;
+}
+
+.in-content:hover {
+    transform: scale(1.1);
+    border: 3px solid #b8b8b8;
+    box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card-img {
+    width: 100%;
+    height: 200px;
+}
+
+.img-div {
+    width: 100%;
+    height: 200px;
+    background-color: #d1d1d1;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #000000;
+}
+
+.card-info {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    color: #1c1c1c;
+    cursor: pointer;
+}
+
+.product-link {
+    display: block;
+    text-decoration: none;
+}
+
+.product-link:hover{
+    text-decoration: none;
+}
+
+.in-content {
+    cursor: pointer;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+    .card {
+        width: 100%; /* Full width for smaller screens */
+        flex-direction: row; /* Keep image on the left side */
+    }
+
+    .img {
+        width: 40%; 
+    }
+}

@@ -1,0 +1,137 @@
+<% layout('/adminPage/layouts/boilerplate') -%>
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Sellers Requests</h1>
+    <div class="sellers-list">
+        <% sellers.forEach(seller => { %>
+            <div class="seller-card">
+                <div class="seller-details">
+                    <h3><%= seller.username %></h3>
+                    <p>Email: <%= seller.email %></p>
+                    <p>Company: <%= seller.companyName %></p>
+                    <p>Aadhar: <%= seller.aadhar %></p>
+                    <p>Phone No.: <%= seller.Pnumber %></p>
+                    <p>District: <%= seller.district %></p>
+                </div>
+
+                <div class="seller-actions">
+                    <a href="/admin/accept-seller/<%= seller._id %>" class="btn accept-btn">Accept</a>
+                    <a href="/admin/reject-seller/<%= seller._id %>" class="btn reject-btn">Reject</a>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f4f4f9;
+        font-family: Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+
+    .sellers-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .seller-card {
+        background: #ffffff;
+        color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 900px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+        margin-bottom: 20px;
+    }
+
+    .seller-card:hover {
+        transform: scale(1.05);
+    }
+
+
+    .seller-details {
+        flex: 2;
+        padding-left: 20px;
+        text-align: center;
+    }
+
+    .seller-details h3 {
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .seller-details p {
+        margin: 5px 0;
+    }
+
+    .seller-actions {
+        flex: 1;
+        text-align: right;
+        padding-left: 20px;
+    }
+
+    .btn {
+        padding: 12px 18px;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    .accept-btn {
+        background: #28a745;
+    }
+
+    .reject-btn {
+        background: #dc3545;
+    }
+
+    .btn:hover {
+        opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+        .seller-card {
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .seller-details {
+            padding-left: 0;
+        }
+
+        .seller-actions {
+            margin-top: 10px;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .seller-card {
+            padding: 15px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+        }
+    }
+</style>

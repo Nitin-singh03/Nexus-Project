@@ -1,0 +1,134 @@
+<style>
+  .search-btn {
+    background-color: #3a8915;
+    color: #fff;
+    border-radius: 25px;
+    padding: 0 1rem 0 1rem;
+  }
+
+  .search-btn:hover {
+    background-color: #3a8915;
+    color: #fff;
+  }
+
+  .search-btn i {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+
+  .search-inp {
+    border-radius: 25px;
+    padding: 0.5rem 3rem;
+  }
+
+  /* Styling the container */
+  .toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .toggle-btn {
+    width: 60px;
+    height: 30px;
+    border-radius: 50px;
+    background-color: #ccc;
+    position: relative;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .toggle-icon {
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+  }
+
+  .toggle-btn.active {
+    background-color: #3a8915;
+  }
+
+  .toggle-btn.active .toggle-icon {
+    transform: translateX(30px);
+  }
+
+  /* Text styling */
+  .toggle-text {
+    margin-left: 10px;
+    font-weight: bold;
+    color: #000000A6;
+  }
+</style>
+
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+  <div class="container-fluid">
+    <div class="logo_item">
+      <i class="bx bx-menu" id="sidebarOpen"></i>
+      <a href="javascript:history.back()">
+        <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png"
+          alt="">
+      </a>
+      <a href="javascript:history.back()">AgroGuide</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <% if (currUser) { %>
+        <div class="toggle-container navbar-nav ms-auto">
+          <button class="toggle-btn" id="toggleBtn">
+            <span class="toggle-icon"></span>
+          </button>
+          <span class="toggle-text" id="toggleText">Not Looking for Work</span>
+        </div>
+        <% } %>
+          <div class="navbar-nav ms-auto">
+            <form action="/search" method="get" class="d-flex" role="search">
+              <input class="form-control me-2 search-inp" type="search" name="query" placeholder="Search"
+                aria-label="Search">
+              <button class="btn search-btn" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>Search
+              </button>
+            </form>
+          </div>
+
+          <div class="navbar-nav ms-auto">
+            <% if (currUser) { %>
+              <a class="nav-link" href="/messages"><b>Messages</b></a>
+              <a class="nav-link" href="/edit"><b>Edit Profile</b></a>
+              <a class="nav-link" href="/logout"><b>Log out</b></a>
+              <% } else if (sellerId) { %>
+                <a class="nav-link" href="/seller/dashboard"><b>Seller Dashboard</b></a>
+                <a class="nav-link" href="/logout"><b>Log out</b></a>
+                <% } else if (contractorId) { %>
+                  <a class="nav-link" href="/contractor/dashboard"><b>Contractor Dashboard</b></a>
+                  <a class="nav-link" href="/logout"><b>Log out</b></a>
+                  <% } else { %>
+                    <a class="nav-link" href="/signup"><b>Sign up</b></a>
+                    <a class="nav-link" href="/login"><b>Log in</b></a>
+                    <% } %>
+          </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const toggleBtn = document.getElementById('toggleBtn');
+  const toggleText = document.getElementById('toggleText');
+
+  toggleBtn.addEventListener('click', () => {
+    toggleBtn.classList.toggle('active');
+    if (toggleBtn.classList.contains('active')) {
+      toggleText.textContent = 'Looking for Work';
+    } else {
+      toggleText.textContent = 'Not Looking for Work';
+    }
+  });
+</script>

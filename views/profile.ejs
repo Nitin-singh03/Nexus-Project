@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Page</title>
+    <link rel="icon" href="/logo.png">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        font-size: 30px;
+        font-weight: bold;
+        padding-bottom: 10px;
+      }
+      .profile-tab {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        justify-content: center;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      .profile-tab img {
+        height: 80px;
+        width: 80px;
+        border-radius: 50%;
+        margin-right: 15px;
+        align-items: center;
+      }
+      .profile-tab p {
+        color: white;
+        font-size: 24px;
+        margin: 0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        top: 135px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .form-group input[type="file"] {
+        padding: 3px;
+      }
+      .form-group .photo-preview {
+        max-width: 150px;
+        border-radius: 4px;
+      }
+      .form-group textarea {
+        resize: vertical;
+      }
+      .form-group button {
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        display: block;
+        width: 100%;
+      }
+      .form-group button:hover {
+        background-color: #45a049;
+      }
+      .editable {
+        display: none;
+      }
+      .profile-info.editing {
+        display: none;
+      }
+      .editable.editing {
+        display: block;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        left: 0;
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 30px;
+        z-index: 1000;
+      }
+      .logo_item {
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--blue-color);
+      }
+
+      .logo_item a {
+        text-decoration: none;
+        color: #3a8915;
+        font-size: 22px;
+      }
+
+      .navbar img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        font-size: 22px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo_item ">
+        <i class="bx bx-menu" id="sidebarOpen"></i>
+        <a href="javascript:history.back()">
+          <img src="/logo.png" alt="">
+        </a>
+        <a href="javascript:history.back()">AgroGuide</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1>Profile Page</h1>
+
+      <!-- Profile Tab -->
+      <div class="profile-tab">
+        <img
+          id="profile-tab-img"
+          src="/profile.jpg"
+          alt="Profile Photo"
+        />
+      </div>
+
+      <!-- Profile Information View -->
+      <div class="profile-info">
+        <div class="form-group">
+          <label for="view-first-name">User Name</label>
+          <p id="view-first-name"><%=user.username%></p>
+        </div>
+        <div class="form-group">
+          <label for="view-mobile-number">Mobile Number</label>
+          <p id="view-mobile-number"><%=user.Pnumber%></p>
+        </div>
+        <div class="form-group">
+          <label for="view-email">Email ID (Optional)</label>
+          <p id="view-email"><%=user.email%></p>
+        </div>
+        <div class="form-group">
+          <label for="view-aadhar-number">Aadhar Number</label>
+          <p id="view-aadhar-number"><%=user.aadhar%></p>
+        </div>
+        <div class="form-group">
+          <label for="view-district">District</label>
+          <p id="view-district"><%=user.district%></p>
+        </div>
+        <div class="form-group">
+          <button onclick="toggleEdit()">Edit</button>
+        </div>
+      </div>
+
+<form action="/user/<%= user.id %>?_method=PATCH" method="POST" class="editable">
+  <h2>Edit Profile</h2>
+  <div class="form-group">
+      <label for="name">User Name</label>
+      <input type="text" id="name" name="name" value="<%= user.username %>" required>
+  </div>
+  <div class="form-group">
+      <label for="number">Mobile Number</label>
+      <input type="text" id="number" name="number" value="<%= user.Pnumber %>" required>
+  </div>
+  <div class="form-group">
+      <label for="email">Email ID (Optional)</label>
+      <input type="email" id="email" name="email" value="<%= user.email %>">
+  </div>
+  <div class="form-group">
+      <label for="aadhar">Aadhar Number</label>
+      <input type="text" id="aadhar" name="aadhar" value="<%= user.aadhar %>" required>
+  </div>
+  <div class="form-group">
+      <label for="district">District</label>
+      <input type="text" id="district" name="district" value="<%= user.district %>" required>
+  </div>
+  <div class="form-group">
+      <label for="currentPassword">Current Password</label>
+      <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter your current password" required>
+  </div>
+  <div class="form-group">
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" name="newPassword" placeholder="Enter a new password (optional)">
+  </div>
+  <div class="form-group">
+      <label for="confirmPassword">Confirm New Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password (optional)">
+  </div>
+  <div class="form-group">
+    <label for="photo">Profile Photo</label>
+    <input type="file" id="photo" accept="image/*" onchange="previewPhoto()">
+</div>
+<div class="form-group">
+  <img id="photo-preview" class="photo-preview" src="/profile.jpg" alt="Photo Preview">
+</div>
+  <div class="form-group">
+      <button type="submit">Update Profile</button>
+  </div>
+</form>
+<br><br><br><br><br><br>
+    
+  
+    </div>
+
+    <script>
+      function toggleEdit() {
+        var profileInfo = document.querySelector(".profile-info");
+        var editableForm = document.querySelector(".editable");
+        profileInfo.classList.toggle("editing");
+        editableForm.classList.toggle("editing");
+      }
+
+      function previewPhoto() {
+        var file = document.getElementById("photo").files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("photo-preview").src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    </script>
+  </body>
+</html>

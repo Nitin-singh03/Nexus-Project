@@ -1,0 +1,53 @@
+<% layout('./layouts/boilerplate') -%>
+
+<div class="row mt-3">
+    <h1 class="col-6 offset-3">Create Contract</h1>
+    <div class="col-6 offset-3">
+        <form id="createContractForm" action="/contract/new" method="POST" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="area" class="form-label">Area (in acres)</label>
+                <input id="area" type="number" step="0.01" class="form-control" name="area" required>
+                <div class="invalid-feedback">Please enter a valid area.</div>
+            </div>
+            <div class="mb-3">
+                <label for="rent" class="form-label">Rent</label>
+                <input id="rent" type="number" step="0.01" class="form-control" name="rent" required>
+                <div class="invalid-feedback">Please enter a valid rent amount.</div>
+            </div>
+            <div class="mb-3">
+                <label for="rent_type" class="form-label">Rent Type</label>
+                <select id="rent_type" class="form-select" name="rent_type" required>
+                    <option value="">Select rent type</option>
+                    <option value="Rs/month">Rs/month</option>
+                    <option value="percentage">Percentage</option>
+                </select>
+                <div class="invalid-feedback">Please select a rent type.</div>
+            </div>
+            <div class="mb-3">
+                <label for="terms" class="form-label">Terms</label>
+                <textarea id="terms" class="form-control" name="terms" rows="3" required></textarea>
+                <div class="invalid-feedback">Please provide the terms.</div>
+            </div>
+            <button type="submit" class="btn btn-dark">Create Contract</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        var forms = document.querySelectorAll('.needs-validation');
+
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault(); 
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated'); 
+                }, false);
+            });
+    })();
+</script>

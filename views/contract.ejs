@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= contract.terms %> - Product Details</title>
+    <link rel="stylesheet" href="/Pstyle.css">
+    <link rel="icon"  href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
+</head>
+<body>
+    <div class="product-container">
+        <div class="product-image">
+            <img src="<%= contract.owner.image %>" alt="Product Image">
+        </div>
+        <div class="product-details">
+            <h1><%= contract.constructor_name %></h1>
+            <p><strong>Rate:</strong> <%=contract.rent%> <%= contract.rent_type%> </p>
+            <p><strong>Area:</strong> <%= contract.area %></p>
+            <p><strong>Description:</strong> <%= contract.terms %></p>
+
+            <h2>Seller Information</h2>
+            <p><strong>Seller Name:</strong> <%= contract.owner.username %></p>
+            <p><strong>Mobile:</strong> <%= contract.owner.Pnumber%></p>
+            <p><strong>Email:</strong> <%= contract.owner.email %></p>
+            <p><strong>District:</strong> <%= contract.owner.district %></p>
+
+            <div class="button-container">
+                <a href="mailto:<%= contract.owner.email %>" class="button mail">Mail</a>
+                <a class="button mail" href="/contractor/chat/<%=contract.owner._id%>">Message</a>
+            </div>
+            <div class="button-container">
+                <a class="button mail">Add Review</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
