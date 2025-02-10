@@ -101,24 +101,78 @@
             </form>
         </div>
         <div class="reviews-section">
-            <h3>Customer Reviews</h3>
+            <style>
+                .reviews-section {
+                    padding: 20px;
+                    background-color: #f9fafb;
+                    border-radius: 10px;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                }
         
-            <% if (reviews.length> 0) { %>
-                <% reviews.forEach(review=> { %>
-                    <div class="review-card">
-                        <p><strong>
-                                <%= review.user.username %>
-                            </strong> - <%= review.createdAt.toDateString() %>
-                        </p>
-                        <p>⭐ <%= review.rating %>/5</p>
-                        <p>
-                            <%= review.comment %>
-                        </p>
-                    </div>
+                .reviews-title {
+                    font-size: 24px;
+                    font-weight: 600;
+                    color: #333;
+                    margin-bottom: 20px;
+                }
+        
+                .review-list {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 15px; /* Space between review cards */
+                }
+        
+                .review-card {
+                    background-color: #fff;
+                    padding: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                }
+        
+                .review-user {
+                    font-size: 14px;
+                    color: #555;
+                    margin-bottom: 8px;
+                }
+        
+                .review-rating {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #f59e0b;
+                    margin-bottom: 10px;
+                }
+        
+                .review-comment {
+                    font-size: 16px;
+                    color: #333;
+                }
+        
+                .no-reviews {
+                    font-size: 16px;
+                    color: #888;
+                    text-align: center;
+                    margin-top: 10px;
+                }
+            </style>
+        
+            <h3 class="reviews-title">Customer Reviews</h3>
+            <% if (reviews.length > 0) { %>
+                <div class="review-list">
+                    <% reviews.forEach(review => { %>
+                        <div class="review-card">
+                            <p class="review-user">
+                                <strong><%= review.user.username %></strong>
+                                - <%= review.createdAt.toDateString() %>
+                            </p>
+                            <p class="review-rating">⭐ <%= review.rating %>/5</p>
+                            <p class="review-comment"><%= review.comment %></p>
+                        </div>
                     <% }); %>
-                        <% } else { %>
-                            <p>No reviews yet. Be the first to review this product!</p>
-                            <% } %>
+                </div>
+            <% } else { %>
+                <p class="no-reviews">No reviews yet. Be the first to review this contract!</p>
+            <% } %>
         </div>
     </div>
     
