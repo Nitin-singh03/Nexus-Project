@@ -99,8 +99,12 @@
             </form>
           </div>
 
+
+            <div id="google_translate_element" class="nav-link"></div>
+
           <div class="navbar-nav ms-auto">
             <% if (currUser) { %>
+              
               <a class="nav-link" href="/messages"><b>Messages</b></a>
               <a class="nav-link" href="/edit"><b>Edit Profile</b></a>
               <a class="nav-link" href="/logout"><b>Log out</b></a>
@@ -119,6 +123,8 @@
   </div>
 </nav>
 
+
+
 <script>
   const toggleBtn = document.getElementById('toggleBtn');
   const toggleText = document.getElementById('toggleText');
@@ -132,3 +138,13 @@
     }
   });
 </script>
+<script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en', // Default language of the page
+      includedLanguages: 'en,hi,bn,kn,ks,ml,ne,pa,sa,ta,te,', // Add languages you want to include (ISO 639-1 codes)
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+  }
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>

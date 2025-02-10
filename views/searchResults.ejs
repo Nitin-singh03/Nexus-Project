@@ -69,7 +69,7 @@
                   <i class="fa-solid fa-magnifying-glass"></i>Search
               </button>
 
-              
+              <div id="google_translate_element" class="nav-link"></div>
               </div>
               <div class="sort-filter">
                 <div class="filter-option sort-by">
@@ -82,6 +82,7 @@
                 </div>
             </form>
           </div>
+
           <div class="navbar-nav ms-auto">
             <% if (currUser) { %>
               <a class="nav-link" href="/edit"><b>Edit Profile</b></a>
@@ -245,5 +246,15 @@
       }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en', // Default language of the page
+          includedLanguages: 'en,hi,bn,kn,ks,ml,ne,pa,sa,ta,te,', // Add languages you want to include (ISO 639-1 codes)
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+      }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
 </html>
