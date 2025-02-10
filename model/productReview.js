@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
 const reviewProduct = new Schema({
     product: {
         type: Schema.Types.ObjectId,
@@ -9,7 +10,7 @@ const reviewProduct = new Schema({
     },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true,
     },
     rating: {
