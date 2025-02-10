@@ -114,7 +114,7 @@ exports.viewProduct = async (req, res) => {
 
         // Fetch reviews for this product
         const reviews = await ReviewProduct.find({ product: product._id })
-            .populate('User', 'username')
+            .populate('user', 'username')
             .exec();
 
         res.render('product', { product, reviews });

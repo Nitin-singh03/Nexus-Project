@@ -107,7 +107,7 @@
                 <% reviews.forEach(review=> { %>
                     <div class="review-card">
                         <p><strong>
-                                <%= review.userId.username %>
+                                <%= review.username %>
                             </strong> - <%= review.createdAt.toDateString() %>
                         </p>
                         <p>⭐ <%= review.rating %>/5</p>
