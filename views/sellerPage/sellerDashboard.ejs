@@ -39,7 +39,7 @@
                   </div>
                   <p class="card-title">&#x20b9; <%= product.price %></p>
                   <p class="card-title"><%= product.title %></p>
-                  <p class="card-info"><%= product.Smalldescription %></p>
+                  <p class="card-info truncate"><%= product.Smalldescription %></p>
                 </div>
               </a>
         
@@ -48,7 +48,14 @@
         <p>No listings found. Please add a product.</p>
     <% } %>
 </div>
-
+<style>
+    .truncate {
+        white-space: nowrap;       /* Prevent text from wrapping to the next line */
+        overflow: hidden;          /* Hide overflowed text */
+        text-overflow: ellipsis;   /* Add "..." for overflowing text */
+    }
+  </style>
+  
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
