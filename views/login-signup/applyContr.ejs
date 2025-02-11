@@ -1,123 +1,187 @@
-%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contractor Registration - AgroGuide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-    <div class="row mt-3">
-        <h1 class="col-6 offset-3">Enter Contractor Details on AgroGuide</h1>
-        <div class="col-6 offset-3">
-            <form id="contractorForm" action="/contractor/apply" method="POST" enctype="multipart/form-data"
-                class="needs-validation" novalidate>
+        .card {
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-                <!-- Image Upload -->
-                <div class="mb-3">
-                    <label for="image" class="form-label">Profile Image</label>
+        .form-control {
+            border-radius: 8px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-custom {
+            background: #28a745;
+            color: #ffffff;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-custom:hover {
+            background: #218838;
+        }
+
+        .toggle-password {
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .toggle-password:hover {
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h2 class="text-center text-success mb-4">Register as a Contractor</h2>
+            <form id="contractorForm" action="/contractor/apply" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+
+                <!-- Profile Image -->
+                <div class="mb-3 text-center">
+                    <label for="image" class="form-label fw-bold">Profile Image</label>
                     <input id="image" type="file" class="form-control" name="image">
                     <small class="form-text text-muted">Optional: Upload a profile image.</small>
                 </div>
 
-                <!-- Username -->
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input id="username" type="text" class="form-control" name="username" required>
-                    <div class="valid-feedback">Username looks good</div>
-                    <div class="invalid-feedback">Please enter a valid username</div>
+                <div class="row">
+                    <!-- Username -->
+                    <div class="col-md-6 mb-3">
+                        <label for="username" class="form-label fw-bold">Username</label>
+                        <input id="username" type="text" class="form-control" name="username" required>
+                        <div class="invalid-feedback">Please enter a valid username</div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label fw-bold">Email</label>
+                        <input id="email" type="email" class="form-control" name="email" required>
+                        <div class="invalid-feedback">Please enter a valid email</div>
+                    </div>
                 </div>
 
-                <!-- Email -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input id="email" type="email" class="form-control" name="email" required>
-                    <div class="invalid-feedback">Please enter a valid email</div>
-                </div>
+                <div class="row">
+                    <!-- Phone Number -->
+                    <div class="col-md-6 mb-3">
+                        <label for="pNumber" class="form-label fw-bold">Phone Number</label>
+                        <input id="pNumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" required>
+                        <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
+                    </div>
 
-                <!-- Phone Number -->
-                <div class="mb-3">
-                    <label for="pNumber" class="form-label">Phone Number</label>
-                    <input id="pNumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" required>
-                    <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
-                </div>
-
-                <!-- Aadhar -->
-                <div class="mb-3">
-                    <label for="aadhar" class="form-label">Aadhar</label>
-                    <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" required>
-                    <div class="invalid-feedback">Please enter a valid 12-digit Aadhar number</div>
+                    <!-- Aadhar -->
+                    <div class="col-md-6 mb-3">
+                        <label for="aadhar" class="form-label fw-bold">Aadhar</label>
+                        <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" required>
+                        <div class="invalid-feedback">Please enter a valid 12-digit Aadhar number</div>
+                    </div>
                 </div>
 
                 <!-- District -->
                 <div class="mb-3">
-                    <label for="district" class="form-label">District</label>
+                    <label for="district" class="form-label fw-bold">District</label>
                     <input id="district" type="text" class="form-control" name="district" required>
                     <div class="invalid-feedback">Please enter your district</div>
                 </div>
 
-                <!-- Password -->
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                <!-- Password with Toggle -->
+                <div class="mb-3 position-relative">
+                    <label for="password" class="form-label fw-bold">Password</label>
                     <input id="password" type="password" class="form-control" name="password" required>
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+                </div>
+
+                <!-- Location Fetch -->
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-outline-primary" onclick="getLocation()">📍 Fetch My Location</button>
+                    <p id="location-display" class="text-muted mt-2">Not captured yet</p>
                 </div>
 
                 <!-- Location Fields (Hidden) -->
                 <input type="hidden" id="latitude" name="latitude">
                 <input type="hidden" id="longitude" name="longitude">
 
-                <!-- Display Location -->
-                <div class="mb-3">
-                    <label class="form-label">Your Location</label>
-                    <p id="location-display" class="text-muted">Not captured yet</p>
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button class="btn btn-custom w-100">Apply as Contractor</button>
                 </div>
 
-                <!-- Location Fetch Button -->
-                <button type="button" class="btn btn-primary mb-3" onclick="getLocation()">Fetch My Location</button>
-
-                <!-- Submit Button -->
-                <button class="btn btn-dark">Apply</button>
             </form>
         </div>
     </div>
+</div>
 
-    <script>
-        (function () {
-            'use strict';
-
-            var forms = document.querySelectorAll('.needs-validation');
-
-            Array.prototype.slice.call(forms)
-                .forEach(function (form) {
-                    form.addEventListener('submit', function (event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-        })();
-
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    let lat = position.coords.latitude;
-                    let long = position.coords.longitude;
-
-                    document.getElementById('latitude').value = lat;
-                    document.getElementById('longitude').value = long;
-
-                    document.getElementById('location-display').textContent = `Latitude: ${lat}, Longitude: ${long}`;
-                    alert("Location Captured Successfully!");
-                }, function (error) {
-                    alert("Error getting location: " + error.message);
-                });
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        }
-
-        document.getElementById('contractorForm').addEventListener('submit', function (event) {
-            let lat = document.getElementById('latitude').value;
-            let long = document.getElementById('longitude').value;
-
-            if (!lat || !long) {
-                event.preventDefault();
-                alert("Please fetch your location before submitting.");
-            }
+<script>
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
         });
-    </script>
+    })();
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                let lat = position.coords.latitude;
+                let long = position.coords.longitude;
+
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = long;
+                document.getElementById('location-display').textContent = `📍 Latitude: ${lat}, Longitude: ${long}`;
+                alert("Location Captured Successfully!");
+            }, function (error) {
+                alert("Error getting location: " + error.message);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function togglePassword() {
+        let passwordField = document.getElementById('password');
+        let icon = document.querySelector('.toggle-password');
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+</script>
+
+</body>
+</html>
