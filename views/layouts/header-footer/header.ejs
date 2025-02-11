@@ -83,7 +83,7 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <% if (currUser) { %>
         <div class="toggle-container navbar-nav ms-auto">
-          <form id="workToggleForm" action="/toggle-work" method="POST">
+          <form id="workToggleForm" action="/toggle-work" method="POST" style="display: flex; justify-content: center; align-items: center;">
             <input type="hidden" name="userId" value="<%= currUser ? currUser : '' %>">
             <input type="hidden" name="latitude" id="latitude" value="">
             <input type="hidden" name="longitude" id="longitude" value="">

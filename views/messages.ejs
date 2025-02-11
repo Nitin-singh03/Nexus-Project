@@ -11,7 +11,6 @@
 <body>
     <div class="container">
         <h1>Messages</h1>
-
         <% if (messages.length> 0) { %>
             <% messages.forEach(message=> { %>
                 <div class="message-card">
@@ -26,15 +25,14 @@
                         <p class="timestamp">
                             <%= new Date(message.latestMessage.timestamp).toLocaleString() %>
                         </p>
-                        <a href="/chat/<%= message.contractor._id %>" class="view-chat">View Chat</a>
+                        <a href="/contractor/chat/<%= message.contractor._id %>" class="view-chat">View Chat</a>
                     </div>
                 </div>
-                <% }) %>
+                <% }); %>
                     <% } else { %>
                         <p>No messages found.</p>
                         <% } %>
     </div>
-
     <style>
         body {
             font-family: Arial, sans-serif;

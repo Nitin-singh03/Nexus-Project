@@ -8,6 +8,7 @@ const ContractorReview = require('../model/contractorReview.js');
 const WorkStatus = require('../model/workStatus.js');
 const Chat =require('../model/contractorUserChat.js');
 const Application = require('../model/application.js');
+const mongoose = require('mongoose');
 
 exports.signup = async (req, res) => {
     const { Pnumber, username, email, password } = req.body;
@@ -310,20 +311,22 @@ exports.nearby = async (req, res) => {
 };
 
 
-
 exports.getContractorMessages = async (req, res) => {
     try {
-        const userId = req.params.userId; // Get the logged-in user's ID
+        // Get the logged-in user's ID from request parameters
+        const userId = req.params.userId;
+        // Convert the userId to a Mongoose ObjectId using the new keyword
+        const userIdObj = new mongoose.Types.ObjectId(userId);
 
-        // Find the latest message from each contractor
+        // Aggregate pipeline to fetch the latest message for each contractor
         const messages = await Chat.aggregate([
             {
                 $match: {
-                    $or: [{ sender: userId }, { receiver: userId }]
+                    $or: [{ sender: userIdObj }, { receiver: userIdObj }]
                 }
             },
-            { $unwind: "$messages" }, // Flatten messages array
-            { $sort: { "messages.timestamp": -1 } }, // Sort messages by latest
+            { $unwind: "$messages" }, // Flatten the messages array
+            { $sort: { "messages.timestamp": -1 } }, // Sort by timestamp (latest first)
             {
                 $group: {
                     _id: {
@@ -341,21 +344,24 @@ exports.getContractorMessages = async (req, res) => {
             {
                 $lookup: {
                     from: "contractors",
-                    localField: "_id.contractor",
-                    foreignField: "_id",
+                    let: { contractorId: "$_id.contractor" },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$contractorId"] } } },
+                        { $project: { name: "$username", imageUrl: "$image", _id: 1 } }
+                    ],
                     as: "contractor"
                 }
             },
-            { $unwind: "$contractor" } // Convert contractor array into object
+            { $unwind: "$contractor" } // Convert contractor array into a single object
         ]);
 
+        console.log("Messages fetched:", messages);
         res.render("messages", { messages });
     } catch (error) {
         console.error("Error fetching messages:", error);
         res.status(500).send("Error fetching messages");
     }
 };
-
 
 
 exports.applyForContract = async (req, res) => {
