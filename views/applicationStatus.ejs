@@ -5,41 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Application Status</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Ensure you have a CSS file -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+
+        .application-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100">
-
-    <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Your Applications</h1>
-
-        <% if (applications.length===0) { %>
-            <p class="text-center text-gray-600">No applications found.</p>
-            <% } else { %>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <% applications.forEach(app=> { %>
-                        <div class="bg-white shadow-lg rounded-lg p-4">
-                            <p class="text-gray-600">Contractor: <span class="font-medium">
-                                    <%= app.contractorId.username %>
-                                </span></p>
-                            <p class="text-gray-600">Message: <%= app.message %>
-                            </p>
-                            <p class="text-gray-600">Status:
-                                <span
-                                    class="<%= app.status === 'approved' ? 'text-green-600' : 'text-yellow-500' %> font-semibold">
-                                    <%= app.status %>
-                                </span>
-                            </p>
-                            <p class="text-gray-500 text-sm">Applied on: <%= new
-                                    Date(app.appliedAt).toLocaleDateString() %>
-                            </p>
-                        </div>
-                        <% }) %>
-                </div>
-                <% } %>
-    </div>
-
+<body>
+    <h1>Application Status</h1>
+    <% if (applications && applications.length> 0) { %>
+        <% applications.forEach(function(app) { %>
+            <div class="application-card">
+                <p>
+                    <strong>Contractor:</strong>
+                    <span>
+                        <%= app.contractorId ? app.contractorId.username : "N/A" %>
+                    </span>
+                </p>
+                <p><strong>Message:</strong>
+                    <%= app.message %>
+                </p>
+                <p><strong>Status:</strong>
+                    <%= app.status %>
+                </p>
+                <p><strong>Applied At:</strong>
+                    <%= app.appliedAt %>
+                </p>
+                <% if (app.contractId && app.contractId.title) { %>
+                    <p><strong>Contract Title:</strong>
+                        <%= app.contractId.title %>
+                    </p>
+                    <% } %>
+            </div>
+            <% }); %>
+                <% } else { %>
+                    <p>No applications found.</p>
+                    <% } %>
 </body>
 
 </html>

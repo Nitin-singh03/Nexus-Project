@@ -263,15 +263,13 @@ exports.nearby = async (req, res) => {
             type: "Point",
             coordinates: [longitude, latitude]
           },
-          $maxDistance: 100000 // 10km
+          $maxDistance: 100000 
         }
       }
     });
 
-    // Find all contractors
     const allContractors = await Contractor.find();
 
-    // Extract contractor IDs of nearby contractors
     const contractorIds = nearbyContractors.map(con => con._id);
 
     // Fetch contracts and count per contractor
@@ -393,21 +391,21 @@ exports.applyForContract = async (req, res) => {
 };
 
 exports.applicationStatus = async (req, res) => {
-    try {
-        const userId = req.user; // Ensure it's `req.user`, not `req.User`
-        if (!userId) return res.redirect('/login');
+  try {
+    const userId = req.user;
+    if (!userId) return res.redirect('/login');
 
-        const applications = await Application.find({ userId })
-            .populate('contractId', 'title') // Get contract title
-            .populate('contractorId', 'username') // Get contractor name
-            .select('contractId contractorId message status appliedAt') // Fetch required fields
-            .sort({ appliedAt: -1 });
+    const applications = await Application.find({ userId })
+      .populate('contractId', 'title')
+      .populate('contractorId', 'username')
+      .select('contractId contractorId message status appliedAt')
+      .sort({ appliedAt: -1 });
 
-        console.log("Applications fetched:", applications);
-
-        res.render('applicationStatus', { applications });
-    } catch (error) {
-        console.error("Error fetching application status:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+    console.log("Applications fetched:", applications);
+    res.render('applicationStatus', { applications });
+  } catch (error) {
+    console.error("Error fetching application status:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
+
