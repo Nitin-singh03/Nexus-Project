@@ -16,14 +16,14 @@ exports.applyForContractor = async (req, res) => {
         const existingContractor1 = await Contractor.findOne({ Pnumber });
         if (existingContractor1) {
             req.flash("error", "User with this number already exists!");
-            return res.redirect('/applyCo');
+            return res.redirect('/contractor/apply');
         }
 
         // Check if a contractor with the same Aadhar ID exists
         const existingContractor2 = await Contractor.findOne({ aadhar });
         if (existingContractor2) {
             req.flash("error", "User with this Aadhar ID already exists!");
-            return res.redirect('/applyCo');
+            return res.redirect('/contractor/apply');
         }
 
         // Handle profile image upload (if any)
@@ -57,7 +57,7 @@ exports.applyForContractor = async (req, res) => {
     } catch (error) {
         console.error(error);
         req.flash("error", "An error occurred while applying.");
-        res.redirect('/applyCo');
+        res.redirect('/contractor/apply');
     }
 };
 
