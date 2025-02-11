@@ -29,6 +29,7 @@
     <div class="menu_content">
       <ul class="menu_items">
         <div class="menu_title menu_dahsboard"></div>
+        <% if(!contractorId) {%>
         <li class="item">
           <a href="/searchContractor" class="nav_link submenu_item">
             <span class="navlink_icon">
@@ -37,7 +38,7 @@
             <span class="navlink">Contact Contractors</span>
           </a>
         </li>
-
+        <% } %>
         <li class="item">
           <div class="nav_link submenu_item">
             <span class="navlink_icon">
@@ -122,7 +123,27 @@
           </li>
         </ul>
       <% } %>
-
+      <% if(currUser && isLookingForWork) {%>
+      <ul class="menu_items">
+        <div class="menu_title menu_setting"></div>
+        <li class="item">
+          <a href="/nearby/<%=currUser%>" class="nav_link">
+            <span class="navlink_icon">
+              <i class="fa-solid fa-location-dot"></i>
+            </span>
+            <span class="navlink">Nearby Contractors</span>
+          </a>
+        </li>
+        <li class="item">
+          <a href="/status" class="nav_link">
+            <span class="navlink_icon">
+              <i class="fa-solid fa-person-circle-check"></i>
+            </span>
+            <span class="navlink">Application Status</span>
+          </a>
+        </li>
+      </ul>
+      <% } %>
       <div class="bottom_content">
         <div class="bottom expand_sidebar">
           <span> Expand</span>

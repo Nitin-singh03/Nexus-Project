@@ -2,28 +2,43 @@ const Contractor = require('../model/contractor');
 const Contract = require('../model/contract');
 const Chat = require('../model/contractorUserChat');
 const User = require("../model/user");
+const Application = require('../model/application');
 
 exports.renderApplyPage = (req, res) => {
     res.render("login-signup/applyContr.ejs"); 
 }
 
-exports.applyForContractor = async (req, res) => {
+exports.applyForContractor = async (req, res) => { 
     try {
-        const { username, email, Pnumber, aadhar, district, password } = req.body;
+        const { username, email, Pnumber, aadhar, district, password, latitude, longitude } = req.body;
 
+        // Check if a contractor with the same phone number exists
         const existingContractor1 = await Contractor.findOne({ Pnumber });
         if (existingContractor1) {
-            req.flash("error", "User with this number already exist!");
+            req.flash("error", "User with this number already exists!");
             return res.redirect('/applyCo');
         }
+
+        // Check if a contractor with the same Aadhar ID exists
         const existingContractor2 = await Contractor.findOne({ aadhar });
         if (existingContractor2) {
-            req.flash("error", "User with this Adhaar id already exist!");
+            req.flash("error", "User with this Aadhar ID already exists!");
             return res.redirect('/applyCo');
         }
 
+        // Handle profile image upload (if any)
         const profileImageUrl = req.file ? req.file.path : undefined;
 
+        // Convert latitude & longitude to proper geospatial format
+        let location = undefined;
+        if (latitude && longitude) {
+            location = {
+                type: "Point",
+                coordinates: [parseFloat(longitude), parseFloat(latitude)] // Ensure correct order
+            };
+        }
+
+        // Create new contractor entry with location data
         const newContractor = new Contractor({
             username,
             email,
@@ -31,17 +46,22 @@ exports.applyForContractor = async (req, res) => {
             aadhar,
             district,
             image: profileImageUrl,
+            location // Store geospatial data
         });
 
-        Contractor.register(newContractor, password);
-        req.flash("success", "Successfully Applied to become contractor!");
+        // Register the new contractor
+        await Contractor.register(newContractor, password);
+
+        req.flash("success", "Successfully applied to become a contractor!");
         res.redirect('/');
     } catch (error) {
         console.error(error);
-        req.flash("error", "some error occurred2");
-        res.redirect('/');
+        req.flash("error", "An error occurred while applying.");
+        res.redirect('/applyCo');
     }
-}
+};
+
+
 
 exports.checkContractorStatusPage = (req, res) => {
     res.render("contractorPage/status.ejs");
@@ -179,6 +199,37 @@ exports.renderEditForm = async (req, res) => {
         res.redirect('/contractor/dashboard');
     }
 };
+
+
+exports.renderRequestList = async (req, res) => {
+    try {
+        const contractorId = req.session.contractorId;
+        console.log("Logged-in Contractor ID:", contractorId);  // ✅ Debugging step
+
+        if (!contractorId) {
+            return res.render('requests', { applications: [], message: "No contractor ID found in session." });
+        }
+
+        // ✅ Fetch applications where contractorId matches
+        const applications = await Application.find({ contractorId: contractorId })
+            .populate('userId', 'username email') 
+            .populate('contractId', 'title') 
+            .select('userId contractId message status appliedAt') 
+            .sort({ appliedAt: -1 });
+
+        console.log("Applications found:", applications.length, JSON.stringify(applications, null, 2));
+
+        if (applications.length === 0) {
+            return res.render('requests', { applications: [], message: "No requests found." });
+        }
+
+        res.render('requests', { applications });
+    } catch (error) {
+        console.error("Error fetching contract applications:", error);
+        res.status(500).render('requests', { applications: [], error: "Internal Server Error" });
+    }
+};
+
 
 exports.updateContractorProfile = async (req, res) => {
     const { Pnumber, email, aadhar, district } = req.body;
@@ -371,4 +422,45 @@ exports.renderChatPage = async (req, res) => {
     req.flash('error', 'Error loading chat.');
     res.redirect('/');
   }
+};
+
+exports.acceptApplication = async (req, res) => {
+    try {
+        const applicationId = req.params.id;
+
+        // Find the application and get its contractId
+        const application = await Application.findById(applicationId);
+        if (!application) {
+            return res.status(404).send("Application not found");
+        }
+
+        const contractId = application.contractId;
+
+        // Approve this application
+        await Application.findByIdAndUpdate(applicationId, { status: "Approved" });
+
+        // Delete all other applications for the same contract
+        await Application.deleteMany({ contractId: contractId, _id: { $ne: applicationId } });
+
+        await Contract.findByIdAndDelete(contractId);
+
+        res.redirect('/contractor/requests');
+    } catch (error) {
+        console.error("Error accepting application:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+exports.rejectApplication = async (req, res) => {
+    try {
+        const applicationId = req.params.id;
+
+        // Delete the rejected application
+        await Application.findByIdAndDelete(applicationId);
+
+        res.redirect('/contractor/requests');
+    } catch (error) {
+        console.error("Error rejecting application:", error);
+        res.status(500).send("Internal Server Error");
+    }
 };

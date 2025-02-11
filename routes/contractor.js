@@ -22,6 +22,8 @@ router.get('/dashboard', contractorController.renderDashboard);
 
 router.get('/edit', contractorController.renderEditForm);
 
+router.get('/requests', contractorController.renderRequestList);
+
 router.post('/edit', upload.single('image'), contractorController.updateContractorProfile);
 
 // ✅ Send a message (User ↔ Contractor)
@@ -31,5 +33,9 @@ router.post('/chat/:receiverId', contractorController.createChat);
 router.delete('/chat/:chatId', contractorController.deleteChat);
 
 router.get('/chat/:receiverId', contractorController.renderChatPage);
+
+router.post('/accept/:id', contractorController.acceptApplication);
+
+router.post('/reject/:id', contractorController.rejectApplication);
 
 module.exports = router;

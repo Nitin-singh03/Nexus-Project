@@ -1,79 +1,123 @@
 <% layout('./layouts/boilerplate') -%>
 
-<div class="row mt-3">
-    <h1 class="col-6 offset-3">Enter Contractor Details on AgroGuide</h1>
-    <div class="col-6 offset-3">
-        <form action="/contractor/apply" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-            
-            <!-- Image Upload -->
-            <div class="mb-3">
-                <label for="image" class="form-label">Profile Image</label>
-                <input id="image" type="file" class="form-control" name="image">
-                <small class="form-text text-muted">Optional: Upload a profile image.</small>
-            </div>
+    <div class="row mt-3">
+        <h1 class="col-6 offset-3">Enter Contractor Details on AgroGuide</h1>
+        <div class="col-6 offset-3">
+            <form id="contractorForm" action="/contractor/apply" method="POST" enctype="multipart/form-data"
+                class="needs-validation" novalidate>
 
-            <!-- Username -->
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input id="username" type="text" class="form-control" name="username" required>
-                <div class="valid-feedback">Username looks good</div>
-                <div class="invalid-feedback">Please enter a valid username</div>
-            </div> 
+                <!-- Image Upload -->
+                <div class="mb-3">
+                    <label for="image" class="form-label">Profile Image</label>
+                    <input id="image" type="file" class="form-control" name="image">
+                    <small class="form-text text-muted">Optional: Upload a profile image.</small>
+                </div>
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input id="email" type="email" class="form-control" name="email" required>
-                <div class="invalid-feedback">Please enter a valid email</div>
-            </div>
+                <!-- Username -->
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input id="username" type="text" class="form-control" name="username" required>
+                    <div class="valid-feedback">Username looks good</div>
+                    <div class="invalid-feedback">Please enter a valid username</div>
+                </div>
 
-            <!-- Phone Number -->
-            <div class="mb-3">
-                <label for="pNumber" class="form-label">Phone Number</label>
-                <input id="pNumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" required>
-                <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
-            </div>
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input id="email" type="email" class="form-control" name="email" required>
+                    <div class="invalid-feedback">Please enter a valid email</div>
+                </div>
 
-            <!-- Aadhar -->
-            <div class="mb-3">
-                <label for="aadhar" class="form-label">Aadhar</label>
-                <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" required>
-                <div class="invalid-feedback">Please enter a valid 12-digit Aadhar number</div>
-            </div>
+                <!-- Phone Number -->
+                <div class="mb-3">
+                    <label for="pNumber" class="form-label">Phone Number</label>
+                    <input id="pNumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" required>
+                    <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
+                </div>
 
-            <!-- District -->
-            <div class="mb-3">
-                <label for="district" class="form-label">District</label>
-                <input id="district" type="text" class="form-control" name="district" required>
-                <div class="invalid-feedback">Please enter your district</div>
-            </div>
+                <!-- Aadhar -->
+                <div class="mb-3">
+                    <label for="aadhar" class="form-label">Aadhar</label>
+                    <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" required>
+                    <div class="invalid-feedback">Please enter a valid 12-digit Aadhar number</div>
+                </div>
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input id="password" type="password" class="form-control" name="password" required>
-            </div>
+                <!-- District -->
+                <div class="mb-3">
+                    <label for="district" class="form-label">District</label>
+                    <input id="district" type="text" class="form-control" name="district" required>
+                    <div class="invalid-feedback">Please enter your district</div>
+                </div>
 
-            <!-- Submit Button -->
-            <button class="btn btn-dark">Apply</button>
-        </form>
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" type="password" class="form-control" name="password" required>
+                </div>
+
+                <!-- Location Fields (Hidden) -->
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+
+                <!-- Display Location -->
+                <div class="mb-3">
+                    <label class="form-label">Your Location</label>
+                    <p id="location-display" class="text-muted">Not captured yet</p>
+                </div>
+
+                <!-- Location Fetch Button -->
+                <button type="button" class="btn btn-primary mb-3" onclick="getLocation()">Fetch My Location</button>
+
+                <!-- Submit Button -->
+                <button class="btn btn-dark">Apply</button>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    (function() {
-        'use strict';
+    <script>
+        (function () {
+            'use strict';
 
-        var forms = document.querySelectorAll('.needs-validation');
+            var forms = document.querySelectorAll('.needs-validation');
 
-        Array.prototype.slice.call(forms)
-            .forEach(function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-    })();
-</script>
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    let lat = position.coords.latitude;
+                    let long = position.coords.longitude;
+
+                    document.getElementById('latitude').value = lat;
+                    document.getElementById('longitude').value = long;
+
+                    document.getElementById('location-display').textContent = `Latitude: ${lat}, Longitude: ${long}`;
+                    alert("Location Captured Successfully!");
+                }, function (error) {
+                    alert("Error getting location: " + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        document.getElementById('contractorForm').addEventListener('submit', function (event) {
+            let lat = document.getElementById('latitude').value;
+            let long = document.getElementById('longitude').value;
+
+            if (!lat || !long) {
+                event.preventDefault();
+                alert("Please fetch your location before submitting.");
+            }
+        });
+    </script>

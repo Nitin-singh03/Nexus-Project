@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Applications</title>
+
+    <!-- Bootstrap CDN for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .table {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .approve-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .approve-btn:hover {
+            background-color: #218838;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+
+        .reject-btn:hover {
+            background-color: #c82333;
+        }
+
+        .approved-status {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .no-applications {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #6c757d;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Contract Applications</h1>
+
+        <% if (applications.length> 0) { %>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Email</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% applications.forEach(app=> { %>
+                            <tr>
+                                <td>
+                                    <%= app.userId.username %>
+                                </td>
+                                <td>
+                                    <%= app.userId.email %>
+                                </td>
+                                <td>
+                                    <%= app.message %>
+                                </td>
+                                <td>
+                                    <% if (app.status==="pending" ) { %>
+                                        <span class="text-warning fw-bold">Pending</span>
+                                        <% } else { %>
+                                            <span class="approved-status">Approved</span>
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <% if (app.status==="pending" ) { %>
+                                        <form action="/contractor/accept/<%= app._id %>" method="POST"
+                                            class="d-inline">
+                                            <button type="submit" class="btn approve-btn">Accept</button>
+                                        </form>
+                                        <form action="/contractor/reject/<%= app._id %>" method="POST"
+                                            class="d-inline">
+                                            <button type="submit" class="btn reject-btn">Reject</button>
+                                        </form>
+                                        <% } else { %>
+                                            <span class="approved-status">Approved</span>
+                                            <% } %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+                <p class="no-applications">No applications found.</p>
+                <% } %>
+    </div>
+
+    <!-- Bootstrap JS (for responsiveness) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

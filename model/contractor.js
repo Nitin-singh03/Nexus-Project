@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 const passportLocalMongoose = require("passport-local-mongoose");
 
-const userSchema = new mongoose.Schema({
-  image:{
-        type: String,
-        default: "https://static-00.iconduck.com/assets.00/person-icon-256x242-au2z2ine.png",
-        set: (v) => v || "https://static-00.iconduck.com/assets.00/person-icon-256x242-au2z2ine.png",
+const contractorSchema = new mongoose.Schema({
+  image: {
+    type: String,
+    default: "https://static-00.iconduck.com/assets.00/person-icon-256x242-au2z2ine.png",
+    set: (v) => v || "https://static-00.iconduck.com/assets.00/person-icon-256x242-au2z2ine.png",
   },
   Pnumber: {
     type: String,
     required: true,
-    match: /^[0-9]{10}$/ 
+    match: /^[0-9]{10}$/, 
+    unique: true
   },
   email: {
     type: String,
@@ -34,11 +35,32 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'], 
+      default: 'Point',
+      required: true 
+    },
+    coordinates: {
+      type: [Number], 
+      required: true, 
+      validate: {
+        validator: function(arr) {
+          return arr.length === 2 && arr.every(num => typeof num === 'number');
+        },
+        message: "Coordinates must be an array of two numbers [longitude, latitude]."
+      }
+    }
+  }
 });
 
+// Enable geospatial indexing
+contractorSchema.index({ location: "2dsphere" });
 
-userSchema.plugin(passportLocalMongoose, { usernameField: 'Pnumber' });
+// Passport authentication
+contractorSchema.plugin(passportLocalMongoose, { usernameField: 'Pnumber' });
 
-const Contractor = mongoose.model('Contractor', userSchema);
+const Contractor = mongoose.model('Contractor', contractorSchema);
 
 module.exports = Contractor;

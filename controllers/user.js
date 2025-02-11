@@ -5,6 +5,9 @@ const Contract = require("../model/contract");
 const Contractor =require('../model/contractor');
 const ReviewProduct = require('../model/productReview.js');
 const ContractorReview = require('../model/contractorReview.js');
+const WorkStatus = require('../model/workStatus.js');
+const Chat =require('../model/contractorUserChat.js');
+const Application = require('../model/application.js');
 
 exports.signup = async (req, res) => {
     const { Pnumber, username, email, password } = req.body;
@@ -66,6 +69,7 @@ exports.logout = (req, res) => {
     });
 };
 
+
 exports.renderMain = async (req, res) => {
     try {
         const products = await Product.find().populate('owner').sort('category');
@@ -77,7 +81,7 @@ exports.renderMain = async (req, res) => {
 
         // Create a map of productId -> avgRating
         const ratingMap = {};
-        productRatings.forEach(r => ratingMap[r._id.toString()] = r.avgRating.toFixed(1)); 
+        productRatings.forEach(r => ratingMap[r._id.toString()] = r.avgRating.toFixed(1));
 
         // Attach average rating to products
         const productsWithRatings = products.map(product => ({
@@ -87,12 +91,24 @@ exports.renderMain = async (req, res) => {
 
         const categories = [...new Set(products.map(product => product.category))];
 
-        res.render('index2', { products: productsWithRatings, categories });
+        let isLookingForWork = false;
+
+        if (req.user) {
+            const workStatus = await WorkStatus.findOne({ userId: req.user._id });
+            isLookingForWork = !!workStatus;
+        }
+
+        res.render('index2', { 
+            products: productsWithRatings, 
+            categories,
+            isLookingForWork 
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
     }
 };
+
 
 exports.RenderEditForm = async (req, res) => {
     try {
@@ -109,7 +125,7 @@ exports.UpdateProfile = async (req, res) => {
     const {username, Pnumber, email } = req.body; 
     try {
         await User.findByIdAndUpdate(req.session.user, {username ,Pnumber, email });
-        req.flash("success", 'Uodated Successfully!');
+        req.flash("success", 'Updated Successfully!');
         res.redirect('/');
     } catch (err) {
         req.flash("error", 'some error occurred');
@@ -204,3 +220,164 @@ exports.commodity_price = async(req, res) => {
     res.render('CommodityPrice.ejs');
 };
 
+exports.toggle_work = async (req, res) => {
+  try {
+    console.log("request body", req.body);
+    const { userId, latitude, longitude } = req.body;
+
+    let existingStatus = await WorkStatus.findOne({ userId });
+
+    if (existingStatus) {
+      await WorkStatus.deleteOne({ userId });
+      req.flash("success", 'Work mode turned off');
+      return res.redirect('/');
+    } else {
+      await WorkStatus.create({ userId, latitude, longitude, status: true });
+      req.flash("success", 'Ready to work mode turned On');
+      return res.redirect('/');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
+exports.nearby =  async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Fetch user location from WorkStatus
+    const userLocation = await WorkStatus.findOne({ userId });
+
+    if (!userLocation) {
+      return res.status(404).json({ error: "User location not found" });
+    }
+
+    const { latitude, longitude } = userLocation;
+
+    // Find contractors within 10km (10000m)
+    const nearbyContractors = await Contractor.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [longitude, latitude]
+          },
+          $maxDistance: 10000 
+        }
+      }
+    });
+
+    // Extract contractor IDs
+    const contractorIds = nearbyContractors.map(con => con._id);
+
+    // Find contracts belonging to nearby contractors
+    const contracts = await Contract.find({ owner: { $in: contractorIds } }).populate("owner");
+
+    // Render the EJS view with data
+    res.render("contractsNearby", { contracts, userLocation: { latitude, longitude } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+exports.getContractorMessages = async (req, res) => {
+    try {
+        const userId = req.params.userId; // Get the logged-in user's ID
+
+        // Find the latest message from each contractor
+        const messages = await Chat.aggregate([
+            {
+                $match: {
+                    $or: [{ sender: userId }, { receiver: userId }]
+                }
+            },
+            { $unwind: "$messages" }, // Flatten messages array
+            { $sort: { "messages.timestamp": -1 } }, // Sort messages by latest
+            {
+                $group: {
+                    _id: {
+                        contractor: {
+                            $cond: {
+                                if: { $eq: ["$senderModel", "Contractor"] },
+                                then: "$sender",
+                                else: "$receiver"
+                            }
+                        }
+                    },
+                    latestMessage: { $first: "$messages" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "contractors",
+                    localField: "_id.contractor",
+                    foreignField: "_id",
+                    as: "contractor"
+                }
+            },
+            { $unwind: "$contractor" } // Convert contractor array into object
+        ]);
+
+        res.render("messages", { messages });
+    } catch (error) {
+        console.error("Error fetching messages:", error);
+        res.status(500).send("Error fetching messages");
+    }
+};
+
+
+
+exports.applyForContract = async (req, res) => {
+    try {
+        const { contractId } = req.params;
+        const { message } = req.body;
+        const userId = req.user; 
+
+        if (!userId) return res.redirect('/login');
+
+        // Check if the contract exists
+        const contractExists = await Contract.findById(contractId);
+        if (!contractExists) {
+            return res.status(404).json({ error: "Contract not found" });
+        }
+
+        // Create a new application with status "pending"
+        const newApplication = new Application({
+            contractId,
+            contractorId: contractExists.owner, // Corrected to use contractExists
+            userId,
+            message,
+            status: "pending"
+        });
+
+        await newApplication.save();
+        req.flash("success", "Application submitted successfully!");
+        res.redirect(`/contract/${contractId}`);
+    } catch (error) {
+        console.error("Error applying for contract:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+exports.applicationStatus = async (req, res) => {
+    try {
+        const userId = req.user; // Ensure it's `req.user`, not `req.User`
+        if (!userId) return res.redirect('/login');
+
+        const applications = await Application.find({ userId })
+            .populate('contractId', 'title') // Get contract title
+            .populate('contractorId', 'username') // Get contractor name
+            .select('contractId contractorId message status appliedAt') // Fetch required fields
+            .sort({ appliedAt: -1 });
+
+        console.log("Applications fetched:", applications);
+
+        res.render('applicationStatus', { applications });
+    } catch (error) {
+        console.error("Error fetching application status:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};

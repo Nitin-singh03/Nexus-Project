@@ -72,7 +72,7 @@
       <i class="bx bx-menu" id="sidebarOpen"></i>
       <a href="javascript:history.back()">
         <img src="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png"
-          alt="">
+          alt="Logo">
       </a>
       <a href="javascript:history.back()">AgroGuide</a>
     </div>
@@ -83,29 +83,38 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <% if (currUser) { %>
         <div class="toggle-container navbar-nav ms-auto">
-          <button class="toggle-btn" id="toggleBtn">
-            <span class="toggle-icon"></span>
-          </button>
-          <span class="toggle-text" id="toggleText">Not Looking for Work</span>
+          <form id="workToggleForm" action="/toggle-work" method="POST">
+            <input type="hidden" name="userId" value="<%= currUser ? currUser : '' %>">
+            <input type="hidden" name="latitude" id="latitude" value="">
+            <input type="hidden" name="longitude" id="longitude" value="">
+            <input type="hidden" name="status" id="status" value="<%= isLookingForWork ? 1 : 0 %>">
+
+            <button type="submit" class="toggle-btn <%= isLookingForWork ? 'active' : '' %>" id="toggleBtn">
+              <span class="toggle-icon"></span>
+            </button>
+            <span class="toggle-text" id="toggleText">
+              <%= isLookingForWork ? 'Looking for Work' : 'Not Looking for Work' %>
+            </span>
+          </form>
         </div>
         <% } %>
+
           <div class="navbar-nav ms-auto">
             <form action="/search" method="get" class="d-flex" role="search">
               <input class="form-control me-2 search-inp" type="search" name="query" placeholder="Search"
                 aria-label="Search">
               <button class="btn search-btn" type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>Search
+                <i class="fa-solid fa-magnifying-glass"></i> Search
               </button>
             </form>
           </div>
 
-
-            <div id="google_translate_element" class="nav-link"></div>
+          <div id="google_translate_element" class="nav-link"></div>
 
           <div class="navbar-nav ms-auto">
             <% if (currUser) { %>
-              
-              <a class="nav-link" href="/messages"><b>Messages</b></a>
+          
+              <a class="nav-link" href="/messages/<%=currUser%>"><b>Messages</b></a>
               <a class="nav-link" href="/edit"><b>Edit Profile</b></a>
               <a class="nav-link" href="/logout"><b>Log out</b></a>
               <% } else if (sellerId) { %>
@@ -119,25 +128,46 @@
                     <a class="nav-link" href="/login-main"><b>Log in</b></a>
                     <% } %>
           </div>
+
     </div>
   </div>
 </nav>
 
-
-
 <script>
-  const toggleBtn = document.getElementById('toggleBtn');
-  const toggleText = document.getElementById('toggleText');
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById('toggleBtn');
+    const toggleText = document.getElementById('toggleText');
+    const statusInput = document.getElementById('status');
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+    const form = document.getElementById('workToggleForm');
 
-  toggleBtn.addEventListener('click', () => {
-    toggleBtn.classList.toggle('active');
-    if (toggleBtn.classList.contains('active')) {
-      toggleText.textContent = 'Looking for Work';
-    } else {
-      toggleText.textContent = 'Not Looking for Work';
-    }
+    if (!toggleBtn || !toggleText || !statusInput || !form) return;
+
+    toggleBtn.addEventListener('click', (event) => {
+      event.preventDefault(); // Prevent immediate form submission
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          latitudeInput.value = position.coords.latitude;
+          longitudeInput.value = position.coords.longitude;
+
+          toggleBtn.classList.toggle('active');
+          const isActive = toggleBtn.classList.contains('active');
+          statusInput.value = isActive ? 1 : 0;
+          toggleText.textContent = isActive ? 'Looking for Work' : 'Not Looking for Work';
+
+          form.submit();
+        }, () => {
+          alert("Location access denied. Cannot enable work mode.");
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    });
   });
 </script>
+
 <script type="text/javascript">
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({

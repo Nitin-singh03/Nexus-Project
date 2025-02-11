@@ -42,4 +42,14 @@ router.get('/searchContractor', authController.searchContractor);
 
 router.get('/commodity_price', authController.commodity_price);
 
+router.post('/toggle-work', authController.toggle_work);
+
+router.get("/nearby/:userId", authController.nearby);
+
+router.get("/messages/:userId", authController.getContractorMessages);
+
+router.post('/apply/:contractId', authController.applyForContract);
+
+router.get('/status', authController.applicationStatus);
+
 module.exports = router;
