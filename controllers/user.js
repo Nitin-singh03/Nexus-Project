@@ -263,14 +263,15 @@ exports.nearby = async (req, res) => {
             type: "Point",
             coordinates: [longitude, latitude]
           },
-          $maxDistance: 100000
+          $maxDistance: 100000 // 10km
         }
       }
     });
 
-    console.log(nearbyContractors);
+    // Find all contractors
+    const allContractors = await Contractor.find();
 
-    // Extract contractor IDs
+    // Extract contractor IDs of nearby contractors
     const contractorIds = nearbyContractors.map(con => con._id);
 
     // Fetch contracts and count per contractor
@@ -295,17 +296,21 @@ exports.nearby = async (req, res) => {
 
     const contractorList = Object.values(contractorData);
 
-    // Render EJS view with contractor data
+    console.log("contractorList", contractorList);
+    console.log("all contractor list", allContractors);
+    console.log({ latitude, longitude } );
     res.render("contractsNearby", { 
       contractorList, 
+      allContractors, 
       userLocation: { latitude, longitude } 
     });
-    console.log(contractorList);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server Error" });
   }
 };
+
 
 
 exports.getContractorMessages = async (req, res) => {

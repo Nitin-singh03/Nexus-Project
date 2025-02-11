@@ -2,72 +2,167 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nearby Contractors</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async
-        defer></script>
+    <!-- Load Google Maps API asynchronously -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhPqFBJWF9IGZNkRgBZFjW7wtUtU_ciTk&callback=initMap"></script>
     <style>
         #map {
-            height: 500px;
+            height: 400px;
             width: 100%;
+            margin-bottom: 20px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
 
         .contractor-list {
             margin-top: 20px;
         }
+
+        .contractor-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .contractor-list li {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+
+        /* Styles for the marker legend */
+        #legend {
+            padding: 10px;
+            background: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        #legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        #legend img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <h2>Nearby Contractors</h2>
+    <h1>User Location</h1>
+    <p>Latitude: <span id="user-lat"></span></p>
+    <p>Longitude: <span id="user-lng"></span></p>
 
-    <!-- Google Map -->
+    <!-- Map Container -->
     <div id="map"></div>
 
-    <h3>Contractors List</h3>
-    <ul id="contractor-list"></ul>
+    <!-- Marker Legend -->
+    <h2>Marker Legend</h2>
+    <div id="legend"></div>
+
+    <!-- Contractors List -->
+    <h2>Contractors List</h2>
+    <div class="contractor-list">
+        <ul id="contractor-list"></ul>
+    </div>
+
+    <!-- Hidden JSON data for user location -->
+    <script id="userLocationData" type="application/json">
+    <%- JSON.stringify(userLocation) %>
+  </script>
+
+    <!-- Hidden JSON data for contractor list -->
+    <script id="contractorData" type="application/json">
+    <%- JSON.stringify(contractorList) %>
+  </script>
 
     <script>
-        // Pass contractor data from server to JavaScript
-        const userLocation = JSON.parse('<%= JSON.stringify(userLocation) %>');
-        const contractors = JSON.parse('<%= JSON.stringify(contractorList) %>');
-
         function initMap() {
+            // Parse the JSON data from the hidden script tags
+            const userLocationData = document.getElementById('userLocationData').textContent;
+            const userLocation = JSON.parse(userLocationData);
+
+            const contractorDataText = document.getElementById('contractorData').textContent;
+            const contractorList = JSON.parse(contractorDataText);
+
+            // Update the user location display
+            document.getElementById('user-lat').innerText = userLocation.latitude;
+            document.getElementById('user-lng').innerText = userLocation.longitude;
+
+            // Create a map centered on the user's location
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
-                center: { lat: userLocation.latitude, lng: userLocation.longitude },
+                center: { lat: userLocation.latitude, lng: userLocation.longitude }
             });
 
-            // User's location marker (blue)
+            // Add a marker for the user's location (blue marker)
             new google.maps.Marker({
                 position: { lat: userLocation.latitude, lng: userLocation.longitude },
-                map,
-                title: "Your Location",
+                map: map,
+                title: "You are here",
                 icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             });
 
-            // Get contractor list container
-            const contractorList = document.getElementById("contractor-list");
+            // Define an array of marker icons (colors) to use for contractor markers
+            const markerIcons = [
+                "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+                "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
+                "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+            ];
 
-            // Loop through contractors and add markers
-            contractors.forEach(contractor => {
-                const contractorLocation = {
-                    lat: contractor.contractor.location.coordinates[1],
-                    lng: contractor.contractor.location.coordinates[0]
-                };
+            // Get the contractor list container and legend element
+            const contractorListEl = document.getElementById("contractor-list");
+            const legendEl = document.getElementById("legend");
 
+            // Loop through each contractor in the contractorList array
+            contractorList.forEach((contractorObj, index) => {
+                // Each contractorObj contains a "contractor" field (the contractor document)
+                // and other fields like "contracts" and "contractCount".
+                const contractor = contractorObj.contractor;
+                // The contractor's location is stored as [longitude, latitude]
+                const lat = contractor.location.coordinates[1];
+                const lng = contractor.location.coordinates[0];
+                // Choose a marker icon based on the index (cycling through our icon array)
+                const icon = markerIcons[index % markerIcons.length];
+
+                // Create a marker for this contractor
                 new google.maps.Marker({
-                    position: contractorLocation,
-                    map,
-                    title: `${contractor.contractor.username} (Contracts: ${contractor.contractCount})`,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                    position: { lat: lat, lng: lng },
+                    map: map,
+                    title: `${contractor.username} (Contracts: ${contractorObj.contractCount})`,
+                    icon: icon
                 });
 
-                // Append contractor info to the list
-                const listItem = document.createElement("li");
-                listItem.textContent = `${contractor.contractor.username} (Contracts: ${contractor.contractCount})`;
-                contractorList.appendChild(listItem);
+                // Append contractor info to the list below the map
+                const li = document.createElement("li");
+                li.innerText = `${contractor.username} - Latitude: ${lat}, Longitude: ${lng} (Contracts: ${contractorObj.contractCount})`;
+                contractorListEl.appendChild(li);
+
+                // Add an entry to the legend showing the marker color and contractor name
+                const legendItem = document.createElement("div");
+
+                const iconImg = document.createElement("img");
+                iconImg.src = icon;
+
+                const legendText = document.createElement("span");
+                legendText.innerText = contractor.username;
+
+                legendItem.appendChild(iconImg);
+                legendItem.appendChild(legendText);
+                legendEl.appendChild(legendItem);
             });
         }
     </script>
