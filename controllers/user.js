@@ -243,11 +243,10 @@ exports.toggle_work = async (req, res) => {
 };
 
 
-exports.nearby =  async (req, res) => {
+exports.nearby = async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // Fetch user location from WorkStatus
     const userLocation = await WorkStatus.findOne({ userId });
 
     if (!userLocation) {
@@ -256,7 +255,7 @@ exports.nearby =  async (req, res) => {
 
     const { latitude, longitude } = userLocation;
 
-    // Find contractors within 10km (10000m)
+    // Find nearby contractors (within 10km)
     const nearbyContractors = await Contractor.find({
       location: {
         $near: {
@@ -264,24 +263,50 @@ exports.nearby =  async (req, res) => {
             type: "Point",
             coordinates: [longitude, latitude]
           },
-          $maxDistance: 10000 
+          $maxDistance: 100000
         }
       }
     });
 
+    console.log(nearbyContractors);
+
     // Extract contractor IDs
     const contractorIds = nearbyContractors.map(con => con._id);
 
-    // Find contracts belonging to nearby contractors
-    const contracts = await Contract.find({ owner: { $in: contractorIds } }).populate("owner");
+    // Fetch contracts and count per contractor
+    const contracts = await Contract.find({ owner: { $in: contractorIds } })
+      .populate("owner")
+      .lean();
 
-    // Render the EJS view with data
-    res.render("contractsNearby", { contracts, userLocation: { latitude, longitude } });
+    // Count contracts per contractor
+    const contractorData = {};
+    contracts.forEach(contract => {
+      const contractorId = contract.owner._id;
+      if (!contractorData[contractorId]) {
+        contractorData[contractorId] = {
+          contractor: contract.owner,
+          contracts: [],
+          contractCount: 0
+        };
+      }
+      contractorData[contractorId].contracts.push(contract);
+      contractorData[contractorId].contractCount++;
+    });
+
+    const contractorList = Object.values(contractorData);
+
+    // Render EJS view with contractor data
+    res.render("contractsNearby", { 
+      contractorList, 
+      userLocation: { latitude, longitude } 
+    });
+    console.log(contractorList);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server Error" });
   }
 };
+
 
 exports.getContractorMessages = async (req, res) => {
     try {
