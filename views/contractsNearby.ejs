@@ -2,59 +2,79 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nearby Contractors</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Contractors & Contracts</title>
     <!-- Load Google Maps API asynchronously -->
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhPqFBJWF9IGZNkRgBZFjW7wtUtU_ciTk&callback=initMap"></script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+
         #map {
             height: 400px;
             width: 100%;
             margin-bottom: 20px;
+            border: 1px solid #ccc;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+        h1,
+        h2 {
+            color: #333;
         }
 
         .contractor-list {
             margin-top: 20px;
         }
 
-        .contractor-list ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .contractor-list li {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 5px;
-            border-radius: 5px;
-        }
-
-        /* Styles for the marker legend */
-        #legend {
-            padding: 10px;
-            background: #f7f7f7;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        #legend div {
+        .contractor-card {
+            background: #fff;
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
             display: flex;
-            align-items: center;
-            margin-bottom: 5px;
+            flex-wrap: wrap;
         }
 
-        #legend img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
+        .contractor-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .contractor-details {
+            flex-grow: 1;
+        }
+
+        .contractor-details h3 {
+            margin: 0 0 5px 0;
+        }
+
+        .contract-details {
+            margin-left: 20px;
+            padding: 10px;
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .visit-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -67,15 +87,8 @@
     <!-- Map Container -->
     <div id="map"></div>
 
-    <!-- Marker Legend -->
-    <h2>Marker Legend</h2>
-    <div id="legend"></div>
-
-    <!-- Contractors List -->
-    <h2>Contractors List</h2>
-    <div class="contractor-list">
-        <ul id="contractor-list"></ul>
-    </div>
+    <h2>Contract List</h2>
+    <div id="contract-list" class="contractor-list"></div>
 
     <!-- Hidden JSON data for user location -->
     <script id="userLocationData" type="application/json">
@@ -89,24 +102,21 @@
 
     <script>
         function initMap() {
-            // Parse the JSON data from the hidden script tags
+            // Parse the user location JSON from the hidden script tag
             const userLocationData = document.getElementById('userLocationData').textContent;
             const userLocation = JSON.parse(userLocationData);
 
-            const contractorDataText = document.getElementById('contractorData').textContent;
-            const contractorList = JSON.parse(contractorDataText);
-
-            // Update the user location display
+            // Update displayed user location
             document.getElementById('user-lat').innerText = userLocation.latitude;
             document.getElementById('user-lng').innerText = userLocation.longitude;
 
-            // Create a map centered on the user's location
+            // Create the map centered at the user's location
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
                 center: { lat: userLocation.latitude, lng: userLocation.longitude }
             });
 
-            // Add a marker for the user's location (blue marker)
+            // Add a blue marker for the user's location
             new google.maps.Marker({
                 position: { lat: userLocation.latitude, lng: userLocation.longitude },
                 map: map,
@@ -114,7 +124,7 @@
                 icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             });
 
-            // Define an array of marker icons (colors) to use for contractor markers
+            // Define marker icons and corresponding color codes
             const markerIcons = [
                 "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
                 "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
@@ -122,47 +132,85 @@
                 "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
                 "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
             ];
+            const colorCodes = [
+                "#FF0000", // red
+                "#008000", // green
+                "#800080", // purple
+                "#FFA500", // orange
+                "#FFD700"  // gold/yellow
+            ];
 
-            // Get the contractor list container and legend element
-            const contractorListEl = document.getElementById("contractor-list");
-            const legendEl = document.getElementById("legend");
+            // Parse the contractor list JSON data
+            const contractorDataText = document.getElementById('contractorData').textContent;
+            const contractorList = JSON.parse(contractorDataText);
 
-            // Loop through each contractor in the contractorList array
+            // Get the contract list container element
+            const contractListDiv = document.getElementById('contract-list');
+
+            // Loop through each contractor object and add a marker and card for each
             contractorList.forEach((contractorObj, index) => {
-                // Each contractorObj contains a "contractor" field (the contractor document)
-                // and other fields like "contracts" and "contractCount".
                 const contractor = contractorObj.contractor;
-                // The contractor's location is stored as [longitude, latitude]
                 const lat = contractor.location.coordinates[1];
                 const lng = contractor.location.coordinates[0];
-                // Choose a marker icon based on the index (cycling through our icon array)
-                const icon = markerIcons[index % markerIcons.length];
+                const markerIcon = markerIcons[index % markerIcons.length];
+                const colorCode = colorCodes[index % colorCodes.length];
 
-                // Create a marker for this contractor
+                // Add a marker for this contractor on the map
                 new google.maps.Marker({
                     position: { lat: lat, lng: lng },
                     map: map,
                     title: `${contractor.username} (Contracts: ${contractorObj.contractCount})`,
-                    icon: icon
+                    icon: markerIcon
                 });
 
-                // Append contractor info to the list below the map
-                const li = document.createElement("li");
-                li.innerText = `${contractor.username} - Latitude: ${lat}, Longitude: ${lng} (Contracts: ${contractorObj.contractCount})`;
-                contractorListEl.appendChild(li);
+                // Build a contractor card with full details
+                const card = document.createElement("div");
+                card.className = "contractor-card";
+                card.style.borderColor = colorCode;
 
-                // Add an entry to the legend showing the marker color and contractor name
-                const legendItem = document.createElement("div");
+                // Contractor image
+                const img = document.createElement("img");
+                img.src = contractor.image || '/images/default-avatar.jpg';
+                img.alt = contractor.username;
+                card.appendChild(img);
 
-                const iconImg = document.createElement("img");
-                iconImg.src = icon;
+                // Contractor details container
+                const detailsDiv = document.createElement("div");
+                detailsDiv.className = "contractor-details";
+                detailsDiv.innerHTML = `
+          <h3>${contractor.username}</h3>
+          <p><strong>Phone:</strong> ${contractor.Pnumber}</p>
+          <p><strong>Email:</strong> ${contractor.email || "N/A"}</p>
+          <p><strong>District:</strong> ${contractor.district}</p>
+          <p><strong>Contracts:</strong> ${contractorObj.contractCount}</p>
+          <p><strong>Coordinates:</strong> Lat: ${lat}, Lng: ${lng}</p>
+        `;
+                card.appendChild(detailsDiv);
 
-                const legendText = document.createElement("span");
-                legendText.innerText = contractor.username;
+                // Loop through each contract for this contractor and add contract details
+                contractorObj.contracts.forEach(contract => {
+                    // Convert area and rent to strings by checking for a $numberDecimal property first,
+                    // otherwise use toString()
+                    const areaText = (typeof contract.area === 'object')
+                        ? (contract.area.$numberDecimal ? contract.area.$numberDecimal : contract.area.toString())
+                        : contract.area;
+                    const rentText = (typeof contract.rent === 'object')
+                        ? (contract.rent.$numberDecimal ? contract.rent.$numberDecimal : contract.rent.toString())
+                        : contract.rent;
 
-                legendItem.appendChild(iconImg);
-                legendItem.appendChild(legendText);
-                legendEl.appendChild(legendItem);
+                    const contractDiv = document.createElement("div");
+                    contractDiv.className = "contract-details";
+                    contractDiv.innerHTML = `
+            <p><strong>Area:</strong> ${areaText} acres</p>
+            <p><strong>Rent:</strong> ${rentText} ${contract.rent_type}</p>
+            <p><strong>Terms:</strong> ${contract.terms}</p>
+            <p><a class="visit-button" href="/contract/${contract._id}">View Contract Details</a></p>
+          `;
+                    card.appendChild(contractDiv);
+                });
+
+                // Append the contractor card to the list container
+                contractListDiv.appendChild(card);
             });
         }
     </script>
