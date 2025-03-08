@@ -25,7 +25,6 @@ router.get('/weather', (req, res)=>{
     res.render("weather.ejs", {weather_api});
 })
 
-// Signup Page
 router.get("/signup", (req, res) => {
     res.render("login-signup/signup.ejs");
 });

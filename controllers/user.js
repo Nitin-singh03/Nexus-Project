@@ -209,7 +209,8 @@ exports.searchContractor = async (req, res) => {
 };
 
 exports.commodity_price = async(req, res) => {
-    res.render('CommodityPrice.ejs');
+    const apiKey = process.env.PRICE_API_KEY;
+    res.render('CommodityPrice.ejs', {apiKey});
 };
 
 exports.toggle_work = async (req, res) => {
