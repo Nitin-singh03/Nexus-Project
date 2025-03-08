@@ -23,14 +23,12 @@
     <div class="col-6 offset-3">
         <form action="/product/new" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             
-            <!-- Image Upload -->
             <div class="mb-3">
                 <label for="image" class="form-label">Product Image</label>
                 <input id="image" type="file" class="form-control" name="image">
                 <small class="form-text text-muted">Optional: Upload a product image.</small>
             </div>
 
-            <!-- Title -->
             <div class="mb-3">
                 <label for="title" class="form-label">Product Title</label>
                 <input id="title" type="text" class="form-control" name="title" required>
@@ -38,21 +36,18 @@
                 <div class="invalid-feedback">Please enter a valid title</div>
             </div> 
 
-            <!-- Large Description -->
             <div class="mb-3">
                 <label for="Largedescription" class="form-label">Large Description</label>
                 <textarea id="Largedescription" class="form-control" name="Largedescription"></textarea>
                 <small class="form-text text-muted">Provide a detailed description of the product.</small>
             </div>
 
-            <!-- Small Description -->
             <div class="mb-3">
                 <label for="Smalldescription" class="form-label">Small Description</label>
                 <input id="Smalldescription" type="text" class="form-control" name="Smalldescription" required>
                 <div class="invalid-feedback">Please enter a short description</div>
             </div>
 
-            <!-- Category -->
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
                 <select id="category" class="form-select" name="category" required>
@@ -71,14 +66,12 @@
                 <div class="invalid-feedback">Please select a product category</div>
             </div>
 
-            <!-- Price -->
             <div class="mb-3">
                 <label for="price" class="form-label">Price (in ₹)</label>
                 <input id="price" type="number" class="form-control" name="price">
                 <small class="form-text text-muted">Enter the product price (optional).</small>
             </div>
 
-            <!-- Submit Button -->
             <button class="btn btn-dark">Submit Product</button>
         </form>
     </div>

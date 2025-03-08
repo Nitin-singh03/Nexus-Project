@@ -10,7 +10,6 @@
     <link rel="icon" href="https://res.cloudinary.com/datlajath/image/upload/v1729872176/AgroGuide/p5f3ij1zqjipsifdj0mt.png">
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand" href="javascript:history.back()">
@@ -24,21 +23,19 @@
         <h1 class="col-6 offset-3">Edit Contract</h1>
         <div class="col-6 offset-3">
             <form id="editContractForm" action="/contract/edit/<%= contract._id %>" method="POST" class="needs-validation" novalidate>
-                <!-- Area -->
+
                 <div class="mb-3">
                     <label for="area" class="form-label">Area (in sq. units)</label>
                     <input id="area" type="number" step="0.01" class="form-control" name="area" value="<%= contract.area %>" required>
                     <div class="invalid-feedback">Please enter the area.</div>
                 </div>
 
-                <!-- Rent -->
                 <div class="mb-3">
                     <label for="rent" class="form-label">Rent</label>
                     <input id="rent" type="number" step="0.01" class="form-control" name="rent" value="<%= contract.rent %>" required>
                     <div class="invalid-feedback">Please enter the rent.</div>
                 </div>
 
-                <!-- Rent Type -->
                 <div class="mb-3">
                     <label for="rent_type" class="form-label">Rent Type</label>
                     <select id="rent_type" class="form-select" name="rent_type" required>
@@ -49,7 +46,6 @@
                     <div class="invalid-feedback">Please select a rent type.</div>
                 </div>
 
-                <!-- Terms -->
                 <div class="mb-3">
                     <label for="terms" class="form-label">Terms</label>
                     <textarea id="terms" class="form-control" name="terms" rows="4" required><%= contract.terms %></textarea>

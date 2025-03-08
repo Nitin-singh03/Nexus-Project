@@ -8,12 +8,12 @@ const applicationSchema = new mongoose.Schema({
     },
     contractorId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Contractor', // Reference to the Contractor model
+        ref: 'Contractor', 
         required: true
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user', // Ensure 'User' matches your actual model name
+        ref: 'user', 
         required: true
     },
     message: {
@@ -23,7 +23,7 @@ const applicationSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['pending', 'approved'],
-        default: 'pending' // Default status is "pending"
+        default: 'pending'
     },
     appliedAt: {
         type: Date,

@@ -4,7 +4,7 @@ const workStatusSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    unique: true, // Each user can have only one active work status
+    unique: true, 
   },
   latitude: {
     type: Number,

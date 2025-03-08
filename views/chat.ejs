@@ -42,7 +42,6 @@
             display: inline-block;
         }
 
-        /* Your own messages (sent by you) */
         .my-message {
             background: #007bff;
             color: white;
@@ -51,7 +50,6 @@
             border-top-right-radius: 0;
         }
 
-        /* Other user's messages */
         .their-message {
             background: #e9ecef;
             color: black;
@@ -116,16 +114,14 @@
     </style>
 
     <div class="chat-container">
-        <!-- Display the receiver's username in the header -->
         <h2 class="chat-header">Chat with <%= receiver.username %>
         </h2>
 
-        <!-- Chat Box -->
         <div class="chat-box">
             <% chat.messages.forEach(function(msg) { %>
-                <% // Determine the sender ID. // If msg.sender is populated (object with _id), use that. var
+                <% 
                     senderId=(msg.sender && msg.sender._id) ? msg.sender._id.toString() : msg.sender.toString(); var
-                    currentUserId=user._id.toString(); // Compare IDs: if they match, it's your own message. var
+                    currentUserId=user._id.toString();
                     messageClass=(senderId===currentUserId) ? 'my-message' : 'their-message' ; %>
                     <div class="message <%= messageClass %>">
                         <p class="message-content">
@@ -140,7 +136,6 @@
                     <% }); %>
         </div>
 
-        <!-- Message Input Form -->
         <form action="/contractor/chat/<%= receiver._id %>" method="POST" class="message-form">
             <textarea name="message" placeholder="Type your message..." required></textarea>
             <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
@@ -150,16 +145,13 @@
     </div>
 
     <script>
-        // Function to scroll the chat box to the bottom
         function scrollToBottom() {
             const chatBox = document.querySelector(".chat-box");
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Scroll to the bottom when the page loads
         document.addEventListener("DOMContentLoaded", scrollToBottom);
 
-        // Scroll to the bottom after sending a new message (with a slight delay)
         const messageForm = document.querySelector(".message-form");
         messageForm.addEventListener("submit", function () {
             setTimeout(scrollToBottom, 100);

@@ -4,7 +4,6 @@ const Product = require('../model/product');
 const Contract = require("../model/contract");
 const Contractor =require('../model/contractor');
 const ReviewProduct = require('../model/productReview.js');
-const ContractorReview = require('../model/contractorReview.js');
 const WorkStatus = require('../model/workStatus.js');
 const Chat =require('../model/contractorUserChat.js');
 const Application = require('../model/application.js');
@@ -12,7 +11,7 @@ const mongoose = require('mongoose');
 
 exports.signup = async (req, res) => {
     const { Pnumber, username, email, password } = req.body;
-    console.log(Pnumber);
+
     try {
         const newUser = new User({ Pnumber, username, email });
         await User.register(newUser, password); 
@@ -75,16 +74,13 @@ exports.renderMain = async (req, res) => {
     try {
         const products = await Product.find().populate('owner').sort('category');
 
-        // Fetch and calculate average rating for each product
         const productRatings = await ReviewProduct.aggregate([
             { $group: { _id: "$product", avgRating: { $avg: "$rating" } } }
         ]);
 
-        // Create a map of productId -> avgRating
         const ratingMap = {};
         productRatings.forEach(r => ratingMap[r._id.toString()] = r.avgRating.toFixed(1));
 
-        // Attach average rating to products
         const productsWithRatings = products.map(product => ({
             ...product.toObject(),
             avgRating: ratingMap[product._id.toString()] || "No ratings yet"
@@ -149,24 +145,21 @@ exports.searchProducts = async (req, res) => {
 
     try {
         let products = await Product.find(filter)
-            .populate('owner') // Populate the owner of the product
-            .lean(); // Convert documents to plain objects for easier manipulation
+            .populate('owner')
+            .lean(); 
 
-        // Fetch and attach reviews & average rating for each product
         for (let product of products) {
             const reviews = await ReviewProduct.find({ product: product._id }).populate('user');
-            product.reviews = reviews; // Attach reviews to product
+            product.reviews = reviews;
             
-            // Calculate average rating
             if (reviews.length > 0) {
                 const avgRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
-                product.avgRating = avgRating.toFixed(1); // Round to 1 decimal place
+                product.avgRating = avgRating.toFixed(1);
             } else {
                 product.avgRating = "No Ratings Yet";
             }
         }
 
-        // Sort products if sorting is applied
         if (sort === 'low-high') {
             products.sort((a, b) => a.price - b.price);
         } else if (sort === 'high-low') {
@@ -207,8 +200,6 @@ exports.searchContractor = async (req, res) => {
         }
 
         contracts = await Contract.find(filter).populate('owner').sort(sortOption);
-
-        console.log('Contracts Found:', contracts.length);
         res.render('contractor_search', { contracts, query, sort });
 
     } catch (error) {
@@ -223,7 +214,6 @@ exports.commodity_price = async(req, res) => {
 
 exports.toggle_work = async (req, res) => {
   try {
-    console.log("request body", req.body);
     const { userId, latitude, longitude } = req.body;
 
     let existingStatus = await WorkStatus.findOne({ userId });
@@ -256,7 +246,6 @@ exports.nearby = async (req, res) => {
 
     const { latitude, longitude } = userLocation;
 
-    // Find nearby contractors (within 10km)
     const nearbyContractors = await Contractor.find({
       location: {
         $near: {
@@ -273,12 +262,10 @@ exports.nearby = async (req, res) => {
 
     const contractorIds = nearbyContractors.map(con => con._id);
 
-    // Fetch contracts and count per contractor
     const contracts = await Contract.find({ owner: { $in: contractorIds } })
       .populate("owner")
       .lean();
 
-    // Count contracts per contractor
     const contractorData = {};
     contracts.forEach(contract => {
       const contractorId = contract.owner._id;
@@ -294,10 +281,6 @@ exports.nearby = async (req, res) => {
     });
 
     const contractorList = Object.values(contractorData);
-
-    console.log("contractorList", contractorList);
-    console.log("all contractor list", allContractors);
-    console.log({ latitude, longitude } );
     res.render("contractsNearby", { 
       contractorList, 
       allContractors, 
@@ -313,20 +296,17 @@ exports.nearby = async (req, res) => {
 
 exports.getContractorMessages = async (req, res) => {
     try {
-        // Get the logged-in user's ID from request parameters
         const userId = req.params.userId;
-        // Convert the userId to a Mongoose ObjectId using the new keyword
         const userIdObj = new mongoose.Types.ObjectId(userId);
 
-        // Aggregate pipeline to fetch the latest message for each contractor
         const messages = await Chat.aggregate([
             {
                 $match: {
                     $or: [{ sender: userIdObj }, { receiver: userIdObj }]
                 }
             },
-            { $unwind: "$messages" }, // Flatten the messages array
-            { $sort: { "messages.timestamp": -1 } }, // Sort by timestamp (latest first)
+            { $unwind: "$messages" },
+            { $sort: { "messages.timestamp": -1 } }, 
             {
                 $group: {
                     _id: {
@@ -352,10 +332,9 @@ exports.getContractorMessages = async (req, res) => {
                     as: "contractor"
                 }
             },
-            { $unwind: "$contractor" } // Convert contractor array into a single object
+            { $unwind: "$contractor" } 
         ]);
 
-        console.log("Messages fetched:", messages);
         res.render("messages", { messages });
     } catch (error) {
         console.error("Error fetching messages:", error);
@@ -372,16 +351,14 @@ exports.applyForContract = async (req, res) => {
 
         if (!userId) return res.redirect('/login');
 
-        // Check if the contract exists
         const contractExists = await Contract.findById(contractId);
         if (!contractExists) {
             return res.status(404).json({ error: "Contract not found" });
         }
 
-        // Create a new application with status "pending"
         const newApplication = new Application({
             contractId,
-            contractorId: contractExists.owner, // Corrected to use contractExists
+            contractorId: contractExists.owner,
             userId,
             message,
             status: "pending"
@@ -407,7 +384,6 @@ exports.applicationStatus = async (req, res) => {
       .select('contractId contractorId message status appliedAt')
       .sort({ appliedAt: -1 });
 
-    console.log("Applications fetched:", applications);
     res.render('applicationStatus', { applications });
   } catch (error) {
     console.error("Error fetching application status:", error);

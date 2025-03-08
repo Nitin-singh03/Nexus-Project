@@ -108,11 +108,9 @@ exports.deleteProduct = async (req, res) => {
 
 exports.viewProduct = async (req, res) => { 
     try {
-        // Fetch product details
         const product = await Product.findById(req.params.id).populate('owner').exec();
         if (!product) return res.status(404).send('Product not found');
 
-        // Fetch reviews for this product
         const reviews = await ReviewProduct.find({ product: product._id })
             .populate('user', 'username')
             .exec();
@@ -136,13 +134,11 @@ exports.addReview = async (req, res) => {
         const { rating, comment } = req.body;
         const productId = req.params.productId;
 
-        // Validate rating input
         if (!rating || rating < 0 || rating > 5) {
             req.flash('error', 'Rating must be between 0 and 5.');
             return res.redirect('back');
         }
 
-        // Create a new review
         const newReview = new ReviewProduct({
             product: productId,
             user: req.user._id,

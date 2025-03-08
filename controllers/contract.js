@@ -77,7 +77,6 @@ exports.updateContract = async (req, res) => {
     }
 };
 
-// Delete Contract
 exports.deleteContract = async (req, res) => {
     try {
         const deletedContract = await Contract.findByIdAndDelete(req.params.id);
@@ -98,7 +97,6 @@ exports.deleteContract = async (req, res) => {
 
 exports.viewContract = async (req, res) => {
     try {
-        // Step 1: Fetch contract using contract ID from params
         const contract = await Contract.findById(req.params.id).populate('owner').exec();
         
         if (!contract) {
@@ -106,7 +104,6 @@ exports.viewContract = async (req, res) => {
             return res.redirect('/');
         }
 
-        // Step 2: Get the contractor ID from contract's owner field
         const contractorId = contract.owner?._id;
 
         if (!contractorId) {
@@ -114,15 +111,11 @@ exports.viewContract = async (req, res) => {
             return res.redirect('/');
         }
 
-        // Step 3: Fetch the contractor details
         const contractor = await Contractor.findById(contractorId).exec();
 
-        // Step 4: Fetch all reviews for this contractor
-        const reviews = await ContractorReview.find({ contractor: contractorId }) // ✅ Fixed field name
+        const reviews = await ContractorReview.find({ contractor: contractorId })
             .populate('user', 'username')
             .exec();
-
-        console.log("Reviews found:", reviews); // Debugging log
 
         res.render('contract', { contract, contractor, reviews });
     } catch (error) {
@@ -142,19 +135,15 @@ exports.addReviewContractor = async (req, res) => {
         }
 
         const { rating, comment } = req.body;
-        const contractId = req.params.id; // Getting contract ID from params
+        const contractId = req.params.id;
 
-        console.log("Contract ID received:", contractId);
-
-        // Fetch the contract to get the contractor ID
         const contract = await Contract.findById(contractId);
         if (!contract) {
             req.flash('error', 'Contract not found.');
             return res.redirect('back');
         }
 
-        const contractorId = contract.owner; // Extract contractor ID from contract
-        console.log("Contractor ID extracted:", contractorId);
+        const contractorId = contract.owner;
 
         if (!rating || rating < 0 || rating > 5) {
             req.flash('error', 'Rating must be between 0 and 5.');

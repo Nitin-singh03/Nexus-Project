@@ -2,12 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nearby Contractors & Contracts</title>
-    <!-- Load Google Maps API asynchronously -->
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=mapAPIkey&callback=initMap"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -83,98 +82,61 @@
     <h1>User Location</h1>
     <p>Latitude: <span id="user-lat"></span></p>
     <p>Longitude: <span id="user-lng"></span></p>
-
-    <!-- Map Container -->
     <div id="map"></div>
-
     <h2>Contract List</h2>
     <div id="contract-list" class="contractor-list"></div>
-
-    <!-- Hidden JSON data for user location -->
     <script id="userLocationData" type="application/json">
     <%- JSON.stringify(userLocation) %>
   </script>
-
-    <!-- Hidden JSON data for contractor list -->
     <script id="contractorData" type="application/json">
     <%- JSON.stringify(contractorList) %>
   </script>
-
     <script>
+        function getRandomColor(usedColors) {
+            let color;
+            do {
+                color = "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0");
+            } while (usedColors.includes(color));
+            usedColors.push(color);
+            return color;
+        }
         function initMap() {
-            // Parse the user location JSON from the hidden script tag
-            const userLocationData = document.getElementById('userLocationData').textContent;
+            const userLocationData = document.getElementById("userLocationData").textContent;
             const userLocation = JSON.parse(userLocationData);
-
-            // Update displayed user location
-            document.getElementById('user-lat').innerText = userLocation.latitude;
-            document.getElementById('user-lng').innerText = userLocation.longitude;
-
-            // Create the map centered at the user's location
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
-                center: { lat: userLocation.latitude, lng: userLocation.longitude }
-            });
-
-            // Add a blue marker for the user's location
-            new google.maps.Marker({
-                position: { lat: userLocation.latitude, lng: userLocation.longitude },
-                map: map,
-                title: "You are here",
-                icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-            });
-
-            // Define marker icons and corresponding color codes
-            const markerIcons = [
-                "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-                "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
-                "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
-                "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
-            ];
-            const colorCodes = [
-                "#FF0000", // red
-                "#008000", // green
-                "#800080", // purple
-                "#FFA500", // orange
-                "#FFD700"  // gold/yellow
-            ];
-
-            // Parse the contractor list JSON data
-            const contractorDataText = document.getElementById('contractorData').textContent;
+            document.getElementById("user-lat").innerText = userLocation.latitude;
+            document.getElementById("user-lng").innerText = userLocation.longitude;
+            const map = L.map("map").setView([userLocation.latitude, userLocation.longitude], 12);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            L.marker([userLocation.latitude, userLocation.longitude])
+                .addTo(map)
+                .bindPopup("You are here")
+                .openPopup();
+            const contractorDataText = document.getElementById("contractorData").textContent;
             const contractorList = JSON.parse(contractorDataText);
-
-            // Get the contract list container element
-            const contractListDiv = document.getElementById('contract-list');
-
-            // Loop through each contractor object and add a marker and card for each
-            contractorList.forEach((contractorObj, index) => {
+            const contractListDiv = document.getElementById("contract-list");
+            const usedColors = [];
+            contractorList.forEach((contractorObj) => {
                 const contractor = contractorObj.contractor;
                 const lat = contractor.location.coordinates[1];
                 const lng = contractor.location.coordinates[0];
-                const markerIcon = markerIcons[index % markerIcons.length];
-                const colorCode = colorCodes[index % colorCodes.length];
-
-                // Add a marker for this contractor on the map
-                new google.maps.Marker({
-                    position: { lat: lat, lng: lng },
-                    map: map,
-                    title: `${contractor.username} (Contracts: ${contractorObj.contractCount})`,
-                    icon: markerIcon
-                });
-
-                // Build a contractor card with full details
+                const color = getRandomColor(usedColors);
+                L.circleMarker([lat, lng], {
+                    radius: 8,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 1
+                })
+                    .addTo(map)
+                    .bindPopup(`${contractor.username} (Contracts: ${contractorObj.contractCount})`);
                 const card = document.createElement("div");
                 card.className = "contractor-card";
-                card.style.borderColor = colorCode;
-
-                // Contractor image
+                card.style.borderColor = color;
                 const img = document.createElement("img");
-                img.src = contractor.image || '/images/default-avatar.jpg';
+                img.src = contractor.image || "/images/default-avatar.jpg";
                 img.alt = contractor.username;
                 card.appendChild(img);
-
-                // Contractor details container
                 const detailsDiv = document.createElement("div");
                 detailsDiv.className = "contractor-details";
                 detailsDiv.innerHTML = `
@@ -183,21 +145,27 @@
           <p><strong>Email:</strong> ${contractor.email || "N/A"}</p>
           <p><strong>District:</strong> ${contractor.district}</p>
           <p><strong>Contracts:</strong> ${contractorObj.contractCount}</p>
-          <p><strong>Coordinates:</strong> Lat: ${lat}, Lng: ${lng}</p>
+          <p>
+            <strong>Coordinates:</strong> Lat: ${lat}, Lng: ${lng}
+            <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank">
+              Open in Google Maps
+            </a>
+          </p>
         `;
                 card.appendChild(detailsDiv);
-
-                // Loop through each contract for this contractor and add contract details
-                contractorObj.contracts.forEach(contract => {
-                    // Convert area and rent to strings by checking for a $numberDecimal property first,
-                    // otherwise use toString()
-                    const areaText = (typeof contract.area === 'object')
-                        ? (contract.area.$numberDecimal ? contract.area.$numberDecimal : contract.area.toString())
-                        : contract.area;
-                    const rentText = (typeof contract.rent === 'object')
-                        ? (contract.rent.$numberDecimal ? contract.rent.$numberDecimal : contract.rent.toString())
-                        : contract.rent;
-
+                contractorObj.contracts.forEach((contract) => {
+                    const areaText =
+                        typeof contract.area === "object"
+                            ? contract.area.$numberDecimal
+                                ? contract.area.$numberDecimal
+                                : contract.area.toString()
+                            : contract.area;
+                    const rentText =
+                        typeof contract.rent === "object"
+                            ? contract.rent.$numberDecimal
+                                ? contract.rent.$numberDecimal
+                                : contract.rent.toString()
+                            : contract.rent;
                     const contractDiv = document.createElement("div");
                     contractDiv.className = "contract-details";
                     contractDiv.innerHTML = `
@@ -208,11 +176,10 @@
           `;
                     card.appendChild(contractDiv);
                 });
-
-                // Append the contractor card to the list container
                 contractListDiv.appendChild(card);
             });
         }
+        document.addEventListener("DOMContentLoaded", initMap);
     </script>
 </body>
 

@@ -41,9 +41,9 @@ const chatSchema = new mongoose.Schema({
                 type: Date,
                 default: Date.now
             },
-            read: {  // ✅ New field for tracking message status
+            read: {
                 type: Boolean,
-                default: false  // Messages start as unread
+                default: false 
             }
         }
     ]

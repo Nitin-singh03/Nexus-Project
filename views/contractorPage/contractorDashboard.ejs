@@ -7,7 +7,6 @@
     <title>Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* Global resets */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -22,7 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* Navbar styling (unchanged look) */
         .navbar {
             background-color: #f0f0f0;
             padding: 10px 20px;
@@ -57,20 +55,17 @@
             background-color: #23272b;
         }
 
-        /* Container for the main content */
         .container {
             width: 100%;
             margin: 20px;
         }
 
-        /* Flex container for the two sections */
         .main-row {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
 
-        /* Listings and Messages sections */
         .listings-section {
             flex: 2;
             min-width: 300px;
@@ -81,7 +76,6 @@
             min-width: 250px;
         }
 
-        /* Box container styling for both sections */
         .box-container {
             background-color: #f7f7f7;
             height: 85vh;
@@ -98,7 +92,6 @@
             margin-bottom: 20px;
         }
 
-        /* Add Listing button styling */
         .add-listing {
             display: block;
             text-align: center;
@@ -139,7 +132,6 @@
             background-color: #c82333;
         }
 
-        /* Card styling for listings */
         .card {
             display: flex;
             justify-content: space-between;
@@ -182,7 +174,6 @@
             display: inline;
         }
 
-        /* Cards container */
         .cards-container {
             display: flex;
             flex-wrap: wrap;
@@ -191,7 +182,6 @@
             gap: 10px;
         }
 
-        /* List-group styling for messages */
         .list-group {
             list-style: none;
             padding: 0;
@@ -206,7 +196,6 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        /* Message link styling for single line with ellipsis */
         .message-link {
             display: block;
             white-space: nowrap;
@@ -224,7 +213,6 @@
             background-color: #e9ecef;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .main-row {
                 flex-direction: column;
@@ -255,7 +243,6 @@
 
     <div class="container">
         <div class="main-row">
-            <!-- Listings Section -->
             <div class="listings-section">
                 <div class="box-container">
                     <h1>Your Listings</h1>
@@ -293,7 +280,6 @@
                 </div>
             </div>
 
-            <!-- Messages Section -->
             <div class="messages-section">
                 <div class="box-container message">
                     <h4>Messages</h4>

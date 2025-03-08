@@ -55,10 +55,8 @@ const contractorSchema = new mongoose.Schema({
   }
 });
 
-// Enable geospatial indexing
 contractorSchema.index({ location: "2dsphere" });
 
-// Passport authentication
 contractorSchema.plugin(passportLocalMongoose, { usernameField: 'Pnumber' });
 
 const Contractor = mongoose.model('Contractor', contractorSchema);

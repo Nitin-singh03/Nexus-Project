@@ -22,49 +22,42 @@
     <h1 class="col-6 offset-3">Edit Seller Profile</h1>
     <div class="col-6 offset-3">
         <form id="editProfileForm" action="/seller/edit" method="POST" class="needs-validation" novalidate>
-            <!-- Phone Number -->
             <div class="mb-3">
                 <label for="Pnumber" class="form-label">Phone Number</label>
                 <input id="Pnumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" value="<%= seller.Pnumber %>" required>
                 <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
             </div>
 
-            <!-- Username -->
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input id="username" type="text" class="form-control" name="username" value="<%= seller.username %>" required>
                 <div class="invalid-feedback">Please enter a valid username</div>
             </div>
 
-            <!-- Email -->
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input id="email" type="email" class="form-control" name="email" value="<%= seller.email %>" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                 <div class="invalid-feedback">Please enter a valid email address</div>
             </div>
 
-            <!-- Aadhar Number -->
             <div class="mb-3">
                 <label for="aadhar" class="form-label">Aadhar Number</label>
                 <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" value="<%= seller.aadhar %>" required>
                 <div class="invalid-feedback">Please enter a valid 12-digit Aadhar number</div>
             </div>
 
-            <!-- District -->
             <div class="mb-3">
                 <label for="district" class="form-label">District</label>
                 <input id="district" type="text" class="form-control" name="district" value="<%= seller.district %>" required>
                 <div class="invalid-feedback">Please enter your district</div>
             </div>
 
-            <!-- Company Name -->
             <div class="mb-3">
                 <label for="companyName" class="form-label">Company Name</label>
                 <input id="companyName" type="text" class="form-control" name="companyName" value="<%= seller.companyName %>" required>
                 <div class="invalid-feedback">Please enter your company name</div>
             </div>
 
-            <!-- Submit Button -->
             <button type="submit" class="btn btn-dark">Save Changes</button>
         </form>
     </div>

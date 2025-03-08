@@ -12,33 +12,28 @@ exports.applyForContractor = async (req, res) => {
     try {
         const { username, email, Pnumber, aadhar, district, password, latitude, longitude } = req.body;
 
-        // Check if a contractor with the same phone number exists
         const existingContractor1 = await Contractor.findOne({ Pnumber });
         if (existingContractor1) {
             req.flash("error", "User with this number already exists!");
             return res.redirect('/contractor/apply');
         }
 
-        // Check if a contractor with the same Aadhar ID exists
         const existingContractor2 = await Contractor.findOne({ aadhar });
         if (existingContractor2) {
             req.flash("error", "User with this Aadhar ID already exists!");
             return res.redirect('/contractor/apply');
         }
 
-        // Handle profile image upload (if any)
         const profileImageUrl = req.file ? req.file.path : undefined;
 
-        // Convert latitude & longitude to proper geospatial format
         let location = undefined;
         if (latitude && longitude) {
             location = {
                 type: "Point",
-                coordinates: [parseFloat(longitude), parseFloat(latitude)] // Ensure correct order
+                coordinates: [parseFloat(longitude), parseFloat(latitude)] 
             };
         }
 
-        // Create new contractor entry with location data
         const newContractor = new Contractor({
             username,
             email,
@@ -46,10 +41,9 @@ exports.applyForContractor = async (req, res) => {
             aadhar,
             district,
             image: profileImageUrl,
-            location // Store geospatial data
+            location 
         });
 
-        // Register the new contractor
         await Contractor.register(newContractor, password);
 
         req.flash("success", "Successfully applied to become a contractor!");
@@ -149,23 +143,21 @@ exports.renderDashboard = async (req, res) => {
 
         const contracts = await Contract.find({ owner: contractorId });
 
-        // Fetch all chats where the contractor is the receiver
         const chats = await Chat.find({ receiver: contractorId })
             .populate({
                 path: 'messages.sender',
-                select: 'username' // Get sender's username
+                select: 'username'
             })
-            .sort({ 'messages.timestamp': -1 }); // Sort messages by latest first
+            .sort({ 'messages.timestamp': -1 }); 
 
-        // Extract latest messages per sender
         let latestMessages = [];
         for (let chat of chats) {
             if (chat.messages.length > 0) {
-                const latestMsg = chat.messages[chat.messages.length - 1]; // Get last message
+                const latestMsg = chat.messages[chat.messages.length - 1];
                 latestMessages.push({
                     senderId: latestMsg.sender._id, 
-                    senderName: latestMsg.sender.username, // Sender's name
-                    message: latestMsg.content, // Latest message
+                    senderName: latestMsg.sender.username,
+                    message: latestMsg.content, 
                     timestamp: latestMsg.timestamp
                 });
             }
@@ -204,20 +196,16 @@ exports.renderEditForm = async (req, res) => {
 exports.renderRequestList = async (req, res) => {
     try {
         const contractorId = req.session.contractorId;
-        console.log("Logged-in Contractor ID:", contractorId);  // ✅ Debugging step
 
         if (!contractorId) {
             return res.render('requests', { applications: [], message: "No contractor ID found in session." });
         }
 
-        // ✅ Fetch applications where contractorId matches
         const applications = await Application.find({ contractorId: contractorId })
             .populate('userId', 'username email') 
             .populate('contractId', 'title') 
             .select('userId contractId message status appliedAt') 
             .sort({ appliedAt: -1 });
-
-        console.log("Applications found:", applications.length, JSON.stringify(applications, null, 2));
 
         if (applications.length === 0) {
             return res.render('requests', { applications: [], message: "No requests found." });
@@ -274,7 +262,6 @@ exports.createChat = async (req, res) => {
     const { receiverId } = req.params;
     const { message } = req.body;
 
-    // Get currentUser: if req.user is not set, try to find the contractor using the session ID.
     let currentUser = req.user;
     if (!currentUser && req.session.contractorId) {
       currentUser = await Contractor.findById(req.session.contractorId);
@@ -285,12 +272,9 @@ exports.createChat = async (req, res) => {
       return res.redirect("/contractor/login");
     }
 
-    // Authenticated user's data.
     const senderId = currentUser._id;
-    // If req.user exists, assume it's a 'user'; otherwise, assume it's a 'Contractor'
     const senderModel = req.user ? 'user' : 'Contractor';
 
-    // Determine receiver type by checking both collections.
     let receiverModel;
     const receiverIsUser = await User.findById(receiverId);
     const receiverIsContractor = await Contractor.findById(receiverId);
@@ -304,7 +288,6 @@ exports.createChat = async (req, res) => {
       return res.redirect("/chats");
     }
 
-    // Find if a chat already exists between sender and receiver.
     let chat = await Chat.findOne({
       $or: [
         { sender: senderId, receiver: receiverId },
@@ -313,7 +296,6 @@ exports.createChat = async (req, res) => {
     });
 
     if (!chat) {
-      // Create a new Chat document if none exists.
       chat = new Chat({
         sender: senderId,
         senderModel,
@@ -323,7 +305,6 @@ exports.createChat = async (req, res) => {
       });
     }
 
-    // Add the new message to the chat.
     chat.messages.push({
       sender: senderId,
       senderModel,
@@ -356,7 +337,6 @@ exports.renderChatPage = async (req, res) => {
   try {
     const { receiverId } = req.params;
 
-    // Get currentUser: if req.user is not set, try to find the contractor using the session ID.
     let currentUser = req.user;
     if (!currentUser && req.session.contractorId) {
       currentUser = await Contractor.findById(req.session.contractorId);
@@ -368,10 +348,8 @@ exports.renderChatPage = async (req, res) => {
     }
 
     const senderId = currentUser._id;
-    // Since contractors log in via their own route, use 'Contractor' as senderModel.
     const senderModel = req.user ? 'user' : 'Contractor';
 
-    // Look up the receiver (the other party) by the ID in the URL.
     let receiver = await User.findById(receiverId);
     let receiverModel = 'user';
     if (!receiver) {
@@ -383,7 +361,6 @@ exports.renderChatPage = async (req, res) => {
       return res.redirect('/');
     }
 
-    // Find the chat between the two participants.
     let chat = await Chat.findOne({
       $or: [
         { sender: senderId, receiver: receiverId },
@@ -392,7 +369,6 @@ exports.renderChatPage = async (req, res) => {
     }).populate('messages.sender');
 
     if (!chat) {
-      // If no chat exists, create one.
       chat = new Chat({
         sender: senderId,
         senderModel: senderModel,
@@ -401,7 +377,6 @@ exports.renderChatPage = async (req, res) => {
         messages: []
       });
     } else {
-      // Mark any unread messages from the other party as read.
       chat.messages.forEach(msg => {
         if (msg.sender.toString() !== senderId.toString() && !msg.read) {
           msg.read = true;
@@ -411,8 +386,8 @@ exports.renderChatPage = async (req, res) => {
     }
 
     res.render('chat', {
-      user: currentUser, // the logged in contractor
-      receiver,        // the other party
+      user: currentUser, 
+      receiver,
       chat,
       messages: req.flash()
     });
@@ -428,7 +403,6 @@ exports.acceptApplication = async (req, res) => {
     try {
         const applicationId = req.params.id;
 
-        // Find the application and get its contractId
         const application = await Application.findById(applicationId);
         if (!application) {
             return res.status(404).send("Application not found");
@@ -436,10 +410,8 @@ exports.acceptApplication = async (req, res) => {
 
         const contractId = application.contractId;
 
-        // Approve this application
         await Application.findByIdAndUpdate(applicationId, { status: "Approved" });
 
-        // Delete all other applications for the same contract
         await Application.deleteMany({ contractId: contractId, _id: { $ne: applicationId } });
 
         await Contract.findByIdAndDelete(contractId);
@@ -455,7 +427,6 @@ exports.rejectApplication = async (req, res) => {
     try {
         const applicationId = req.params.id;
 
-        // Delete the rejected application
         await Application.findByIdAndDelete(applicationId);
 
         res.redirect('/contractor/requests');

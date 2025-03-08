@@ -22,7 +22,6 @@ exports.login = async (req, res) => {
         }
 
         admin.authenticate(password, (err, result) => {
-            console.log("Authentication result:", { err, result });
 
             if (err || !result) {
                 req.flash("error", "Incorrect password. Please try again.");

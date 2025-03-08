@@ -62,7 +62,6 @@
             <h2 class="text-center text-success mb-4">Register as a Contractor</h2>
             <form id="contractorForm" action="/contractor/apply" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
 
-                <!-- Profile Image -->
                 <div class="mb-3 text-center">
                     <label for="image" class="form-label fw-bold">Profile Image</label>
                     <input id="image" type="file" class="form-control" name="image">
@@ -70,14 +69,12 @@
                 </div>
 
                 <div class="row">
-                    <!-- Username -->
                     <div class="col-md-6 mb-3">
                         <label for="username" class="form-label fw-bold">Username</label>
                         <input id="username" type="text" class="form-control" name="username" required>
                         <div class="invalid-feedback">Please enter a valid username</div>
                     </div>
 
-                    <!-- Email -->
                     <div class="col-md-6 mb-3">
                         <label for="email" class="form-label fw-bold">Email</label>
                         <input id="email" type="email" class="form-control" name="email" required>
@@ -86,14 +83,12 @@
                 </div>
 
                 <div class="row">
-                    <!-- Phone Number -->
                     <div class="col-md-6 mb-3">
                         <label for="pNumber" class="form-label fw-bold">Phone Number</label>
                         <input id="pNumber" type="text" class="form-control" name="Pnumber" pattern="^[0-9]{10}$" required>
                         <div class="invalid-feedback">Please enter a valid 10-digit phone number</div>
                     </div>
 
-                    <!-- Aadhar -->
                     <div class="col-md-6 mb-3">
                         <label for="aadhar" class="form-label fw-bold">Aadhar</label>
                         <input id="aadhar" type="text" class="form-control" name="aadhar" pattern="^[0-9]{12}$" required>
@@ -101,31 +96,26 @@
                     </div>
                 </div>
 
-                <!-- District -->
                 <div class="mb-3">
                     <label for="district" class="form-label fw-bold">District</label>
                     <input id="district" type="text" class="form-control" name="district" required>
                     <div class="invalid-feedback">Please enter your district</div>
                 </div>
 
-                <!-- Password with Toggle -->
                 <div class="mb-3 position-relative">
                     <label for="password" class="form-label fw-bold">Password</label>
                     <input id="password" type="password" class="form-control" name="password" required>
                     <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
                 </div>
 
-                <!-- Location Fetch -->
                 <div class="mb-3 text-center">
                     <button type="button" class="btn btn-outline-primary" onclick="getLocation()">📍 Fetch My Location</button>
                     <p id="location-display" class="text-muted mt-2">Not captured yet</p>
                 </div>
 
-                <!-- Location Fields (Hidden) -->
                 <input type="hidden" id="latitude" name="latitude">
                 <input type="hidden" id="longitude" name="longitude">
 
-                <!-- Submit Button -->
                 <div class="text-center">
                     <button class="btn btn-custom w-100">Apply as Contractor</button>
                 </div>
